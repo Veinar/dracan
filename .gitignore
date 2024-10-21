@@ -1,0 +1,5 @@
+[I|i]nclude
+[L|l]ib
+[S|s]cripts
+pyvenv.cfg
+*pycache*
