@@ -1,0 +1,14 @@
+{
+    "limiting_enabled": true,
+    "rate_limit": "10 per minute",
+    "allowed_methods": ["GET", "POST"],
+    "validation_enabled": true,
+    "json_schema": {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "age": {"type": "number"}
+        },
+        "required": ["name", "age"]
+    }
+}
