@@ -1,0 +1,67 @@
+from flask import Flask
+from .proxy import load_proxy_config, load_rules_config, handle_proxy
+from ..middleware.limiter import create_limiter
+from ..validators.json_validator import create_json_validator
+from ..validators.method_validator import create_method_validator
+import os
+
+def create_app():
+    """
+    Factory function to create a Flask app based on environment settings.
+    """
+    app = Flask(__name__)
+
+    # Set up logging
+    setup_logging(app)
+
+    # Load configurations
+    proxy_config = load_proxy_config()
+    rules_config = load_rules_config()
+
+    # Read environment variables or default settings
+    method_validation_enabled = os.getenv("METHOD_VALIDATION_ENABLED", "true").lower() == "true"
+    json_validation_enabled = os.getenv("JSON_VALIDATION_ENABLED", "true").lower() == "true"
+    rate_limiting_enabled = os.getenv("RATE_LIMITING_ENABLED", "true").lower() == "true"
+
+    # Create validators and pass the app logger
+    validate_method = create_method_validator(rules_config, app.logger) if method_validation_enabled else lambda: (True, None)
+    validate_json = create_json_validator(rules_config, app.logger) if json_validation_enabled else lambda: (True, None)
+
+    # Apply rate limiter if enabled
+    if rate_limiting_enabled:
+        create_limiter(app, rules_config)
+
+    # Route handling
+    @app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+    def proxy_route_without_sub():
+        app.logger.info(f"Proxying request without sub-path")
+        return handle_proxy(proxy_config, rules_config, validate_method, validate_json)
+
+    @app.route('/<path:sub>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+    def proxy_route(sub):
+        app.logger.info(f"Proxying request to sub-path: {sub}")
+        return handle_proxy(proxy_config, rules_config, validate_method, validate_json, sub=sub)
+
+    return app
+
+def setup_logging(app):
+    """
+    Set up logging for the Flask app.
+    """
+    # Set the log level (can be adjusted as needed)
+    log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+
+    # Configure logging for the application
+    import logging
+    logging.basicConfig(
+        level=log_level,  # Set the logging level
+        format="%(asctime)s [%(levelname)s] %(message)s",  # Log format
+        handlers=[
+            logging.StreamHandler(),  # Log to console
+            #logging.FileHandler("app.log", mode='a')  # Optionally log to a file
+        ]
+    )
+
+    # Override Flask's default logger with the configured one
+    app.logger.setLevel(log_level)
+    app.logger.info("Logger setup complete.")
