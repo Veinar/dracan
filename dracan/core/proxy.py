@@ -18,14 +18,18 @@ def load_rules_config(file_path='rules_config.json'):
     with open(file_path, 'r') as f:
         return json.load(f)
 
-def forward_request(request, config):
+def forward_request(request, sub, config):
     """
     Forward the incoming request to the destination service.
     :param request: The original incoming request.
     :param config: The loaded proxy configuration.
+    :param sub: The additional path after the base URL.
     :return: Response from the destination service.
     """
-    destination_url = f"http://{config['destination']['host']}:{config['destination']['port']}{config['destination']['path']}"
+    if sub is None:
+        destination_url = f"http://{config['destination']['host']}:{config['destination']['port']}{config['destination']['path']}"
+    else:
+        destination_url = f"http://{config['destination']['host']}:{config['destination']['port']}{config['destination']['path']}/{sub}"
     
     if request.method == 'GET':
         response = requests.get(destination_url, headers=request.headers, params=request.args)
@@ -38,7 +42,7 @@ def forward_request(request, config):
     
     return response
 
-def handle_proxy(config, rules_config, validate_method, validate_json):
+def handle_proxy(config, rules_config, validate_method, validate_json, sub=None):
     """
     Handle the request forwarding after validating the method and JSON body.
     
@@ -46,21 +50,22 @@ def handle_proxy(config, rules_config, validate_method, validate_json):
     :param rules_config: The rules configuration for filtering.
     :param validate_method: The method validator function.
     :param validate_json: The JSON validator function.
+    :param sub: Optional substring for additional path handling.
     :return: Response object or error response.
     """
     # First, validate the method
     is_valid, validation_response = validate_method()
     if not is_valid:
-        return validation_response
+        return validation_response  # Return the error response if the method is not allowed
 
     # Then, validate the request's JSON (if applicable)
     is_valid, validation_response = validate_json()
     if not is_valid:
-        return validation_response
+        return validation_response  # Return the error response if the JSON is invalid
 
     # If both validations pass, forward the request
     try:
-        response = forward_request(request, config)
+        response = forward_request(request, sub, config)
         return (response.content, response.status_code, response.headers.items())
 
     except Exception as e:
