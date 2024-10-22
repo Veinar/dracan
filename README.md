@@ -73,6 +73,20 @@ docker build . -t dracan:latest
 ```
 > You may want to change name or tag for this build command
 
+### Docker environmental variables
+
+In order to enable/disable validation, filtering or limiting use env variables that should be passed to container.
+
+```bash
+# Should be always set to true/false
+METHOD_VALIDATION_ENABLED=true
+JSON_VALIDATION_ENABLED=true
+RATE_LIMITING_ENABLED=true
+# Optional
+LOG_LEVEL=INFO
+```
+
+
 ## Configuration Files
 
 To set up Dracan effectively, you need to create two configuration files: `proxy_config.json` and `rules_config.json`. These files determine how Dracan will handle incoming traffic and define the rules for validating, filtering, and limiting requests.
