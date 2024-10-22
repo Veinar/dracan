@@ -1,10 +1,11 @@
 from flask import request, jsonify
 
-def create_method_validator(rules_config):
+def create_method_validator(rules_config, logger):
     """
     Creates a function that validates if the request method is allowed based on the provided rules_config.
     
     :param rules_config: The configuration that contains allowed methods and whether method validation is enabled.
+    :param logger: The logger from the Flask app to use for logging.
     :return: A validation function for HTTP methods.
     """
     allowed_methods = rules_config.get("allowed_methods", ["GET", "PUT", "POST", "DELETE"])
@@ -16,20 +17,19 @@ def create_method_validator(rules_config):
         :return: Tuple (is_valid, response) - is_valid is True if valid, False otherwise.
         """
         if not method_validation_enabled:
-            # If method validation is disabled, always return True
+            logger.info("Method validation is disabled.")
             return True, None
 
         if request.method not in allowed_methods:
-            # Return False and a validation response with a 405 status code if method is not allowed
+            logger.warning(f"Method {request.method} not allowed.")  # Log disallowed method
             return False, (jsonify({'error': f"Method {request.method} not allowed"}), 405)
-        
-        # Return True and None if the method is allowed
+
+        logger.info(f"Method {request.method} is allowed.")  # Log allowed method
         return True, None
 
     if method_validation_enabled:
-        print("HTTP Method validation is enabled, allowed methods: " + " | ".join(allowed_methods))
+        logger.info("HTTP Method validation is enabled. Allowed methods: " + " | ".join(allowed_methods))
     else:
-        print("HTTP Method validation is disabled")
-
+        logger.info("HTTP Method validation is disabled.")
 
     return validate_http_method

@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as app
 import requests
 import json
 
@@ -26,21 +26,32 @@ def forward_request(request, sub, config):
     :param sub: The additional path after the base URL.
     :return: Response from the destination service.
     """
+    # Build the destination URL based on the proxy configuration and subpath
     if sub is None:
         destination_url = f"http://{config['destination']['host']}:{config['destination']['port']}{config['destination']['path']}"
     else:
-        destination_url = f"http://{config['destination']['host']}:{config['destination']['port']}{config['destination']['path']}/{sub}"
-    
-    if request.method == 'GET':
-        response = requests.get(destination_url, headers=request.headers, params=request.args)
-    elif request.method == 'POST':
-        response = requests.post(destination_url, headers=request.headers, json=request.get_json())
-    elif request.method == 'PUT':
-        response = requests.put(destination_url, headers=request.headers, json=request.get_json())
-    elif request.method == 'DELETE':
-        response = requests.delete(destination_url, headers=request.headers)
-    
-    return response
+        destination_url = f"http://{config['destination']['host']}:{config['destination']['port']}{config['destination']['path']}{sub}"
+
+    app.logger.info(f"Forwarding {request.method} request to {destination_url}")  # Log request forwarding
+
+    # Forward the request based on its method
+    try:
+        if request.method == 'GET':
+            response = requests.get(destination_url, headers=request.headers, params=request.args)
+        elif request.method == 'POST':
+            response = requests.post(destination_url, headers=request.headers, json=request.get_json())
+        elif request.method == 'PUT':
+            response = requests.put(destination_url, headers=request.headers, json=request.get_json())
+        elif request.method == 'DELETE':
+            response = requests.delete(destination_url, headers=request.headers)
+        
+        app.logger.info(f"Received {response.status_code} from {destination_url}")  # Log response status
+        return response
+
+    except requests.exceptions.RequestException as e:
+        # Log any exception that occurs during forwarding
+        app.logger.error(f"Error forwarding request to {destination_url}: {str(e)}")
+        raise
 
 def handle_proxy(config, rules_config, validate_method, validate_json, sub=None):
     """
@@ -56,12 +67,14 @@ def handle_proxy(config, rules_config, validate_method, validate_json, sub=None)
     # First, validate the method
     is_valid, validation_response = validate_method()
     if not is_valid:
-        return validation_response  # Return the error response if the method is not allowed
+        app.logger.warning("Method validation failed")  # Log method validation failure
+        return validation_response
 
     # Then, validate the request's JSON (if applicable)
     is_valid, validation_response = validate_json()
     if not is_valid:
-        return validation_response  # Return the error response if the JSON is invalid
+        app.logger.warning("JSON validation failed")  # Log JSON validation failure
+        return validation_response
 
     # If both validations pass, forward the request
     try:
@@ -69,5 +82,6 @@ def handle_proxy(config, rules_config, validate_method, validate_json, sub=None)
         return (response.content, response.status_code, response.headers.items())
 
     except Exception as e:
-        # Handle any exception during the forwarding process
+        # Handle any exception during the forwarding process and log it
+        app.logger.error(f"Error during request forwarding: {str(e)}")
         return jsonify({'error': str(e)}), 500
