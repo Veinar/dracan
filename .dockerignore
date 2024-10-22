@@ -1,0 +1,9 @@
+tests/*
+*pycache*
+[I|i]nclude
+[L|l]ib
+[S|s]cripts
+pyvenv.cfg
+# Uncomment this for real case scenario, because this files should be provided by user
+#proxy_config.json
+#rules_config.json
