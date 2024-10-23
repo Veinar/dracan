@@ -18,7 +18,9 @@
 
 - **Request Limiting**: Dracan enables you to set limits on the number of requests processed, helping to mitigate overload and protect application performance.
 
-- **more filtering/validation underway...**
+- **URI Filtering**: Dracan supports filtering of incoming request URIs by allowing you to specify exact allowed URIs or use regular expressions for pattern matching. This ensures that only requests with valid URIs are processed, adding an extra layer of security and control.
+
+- **More filtering/validation underway...**
 
 Dracan is intended to serve as a gatekeeper for your applications, protecting them from erroneous or redundant queries. By ensuring the integrity of incoming requests, it contributes to operational continuity and safeguards against disruptive events.
 
@@ -118,14 +120,14 @@ Ensure this configuration accurately points to your application or mock service.
 
 ### 2. Creating `rules_config.json`
 
-The rules_config.json file contains rules for validating, filtering, and limiting incoming requests. Below is an example configuration:
+The `rules_config.json` file contains rules for validating, filtering, and limiting incoming requests. Below is an example configuration:
 
 ```json
 {
     "limiting_enabled": true,
     "rate_limit": "10 per minute",
-    "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
     "method_validation_enabled": true,
+    "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
     "json_validation_enabled": true,
     "detailed_errors_enabled": false,
     "json_schema": {
@@ -135,7 +137,17 @@ The rules_config.json file contains rules for validating, filtering, and limitin
             "age": { "type": "number" }
         },
         "required": ["name", "age"]
-    }
+    },
+    "uri_validation_enabled": true,
+    "allowed_uris": [
+      "/health",
+      "/data",
+      "/update",
+      "/delete"
+    ],
+    "allowed_uri_patterns": [
+      "^/api/.*"
+    ]
 }
 ```
 
@@ -146,7 +158,9 @@ The rules_config.json file contains rules for validating, filtering, and limitin
 * **json_validation_enabled**: A boolean flag to enable or disable JSON body validation.
 * **detailed_errors_enabled**: When set to true, Dracan provides more detailed error messages for validation failures as HTTP response.
 * **json_schema**: A JSON schema defining the expected structure of the incoming request body. This schema outlines the required properties and their types (in this case, name as a string and age as a number).    
-
+* **uri_validation_enabled**: A boolean flag that enables or disables URI validation for incoming requests.
+* **allowed_uris**: An array of exact URIs that are permitted. Requests that do not match these URIs will be rejected.
+* **allowed_uri_patterns**: An array of regular expressions for URI pattern matching. This allows more flexible matching of URIs that follow certain patterns (e.g., `^/api/.*` will match any URI starting with `/api/`).
 
 > **In real case scenario those two JSON config files should be mounted (from config map or secret) in deployment of Dracan on k8s alike systems.**
 
