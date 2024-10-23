@@ -77,6 +77,10 @@ docker build . -t dracan:latest
 
 In order to enable/disable validation, filtering or limiting use env variables that should be passed to container.
 
+> Dracan by default disables filtering/limiting/validation if entry is not present in `rules_config.json` file.
+
+but additional global disable/enable by env variables is implemented as **stub**.
+
 ```bash
 # Should be always set to true/false
 METHOD_VALIDATION_ENABLED=true
@@ -137,7 +141,7 @@ The rules_config.json file contains rules for validating, filtering, and limitin
 
 * **limiting_enabled**: A boolean value that enables or disables rate limiting for incoming requests.
 * **rate_limit**: Specifies the allowed rate of requests (e.g., "10 per minute"), how to check possible rates is described [here](https://github.com/alisaifee/flask-limiter?tab=readme-ov-file#inspect-the-limits-using-the-command-line-interface).
-* **allowed_methods**: An array of HTTP methods that are permitted for incoming requests (e.g., ["GET", "POST", "PUT", * "DELETE"]).
+* **allowed_methods**: An array of HTTP methods that are permitted for incoming requests (e.g., ["GET", "POST", "PUT", "DELETE"]).
 * **method_validation_enabled**: A boolean flag to enable or disable validation of HTTP methods.
 * **json_validation_enabled**: A boolean flag to enable or disable JSON body validation.
 * **detailed_errors_enabled**: When set to true, Dracan provides more detailed error messages for validation failures as HTTP response.
