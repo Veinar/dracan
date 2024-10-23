@@ -4,6 +4,7 @@
     "method_validation_enabled": true,
     "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
     "json_validation_enabled": true,
+    "detailed_errors_enabled": false,
     "json_schema": {
       "type": "object",
       "properties": {
