@@ -53,7 +53,7 @@ def forward_request(request, sub, config):
         app.logger.error(f"Error forwarding request to {destination_url}: {str(e)}")
         raise
 
-def handle_proxy(config, validate_method, validate_json, validate_payload_size=None, sub=None):
+def handle_proxy(config, validate_method, validate_json, validate_headers, validate_payload_size=None, sub=None):
     """
     Handle the request forwarding after validating the method, JSON body, and optional payload size.
     
@@ -61,6 +61,7 @@ def handle_proxy(config, validate_method, validate_json, validate_payload_size=N
     :param rules_config: The rules configuration for filtering.
     :param validate_method: The method validator function.
     :param validate_json: The JSON validator function.
+    :param validate_headers: The headers validator function.
     :param validate_payload_size: Optional function to validate payload size.
     :param sub: Optional substring for additional path handling.
     :return: Response object or error response.
@@ -75,6 +76,12 @@ def handle_proxy(config, validate_method, validate_json, validate_payload_size=N
     is_valid, validation_response = validate_json()
     if not is_valid:
         app.logger.warning("JSON validation failed")
+        return validation_response
+
+    # Then, validate the request's Headers
+    is_valid, validation_response = validate_headers()
+    if not is_valid:
+        app.logger.warning("Headers validation failed")
         return validation_response
 
     # Validate the payload size if the function is provided

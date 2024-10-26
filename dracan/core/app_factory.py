@@ -4,6 +4,7 @@ from ..middleware.limiter import create_limiter
 from ..validators.json_validator import create_json_validator
 from ..validators.method_validator import create_method_validator
 from ..validators.path_validator import create_path_validator
+from ..validators.headers_validator import create_header_validator
 from ..middleware.payload_limiter import create_payload_size_limiter
 import os
 
@@ -24,6 +25,7 @@ def create_app():
     method_validation_enabled = os.getenv("METHOD_VALIDATION_ENABLED", "true").lower() == "true"
     json_validation_enabled = os.getenv("JSON_VALIDATION_ENABLED", "true").lower() == "true"
     uri_validation_enabled = os.getenv("URI_VALIDATION_ENABLED", "true").lower() == "true"
+    header_validation_enabled = os.getenv("HEADER_VALIDATION_ENABLED", "true").lower() == "true"
     rate_limiting_enabled = os.getenv("RATE_LIMITING_ENABLED", "true").lower() == "true"
     payload_limiting_enabled = os.getenv("PAYLOAD_LIMITING_ENABLED", "true").lower() == "true"
 
@@ -32,6 +34,7 @@ def create_app():
     validate_json = create_json_validator(rules_config, app.logger) if json_validation_enabled else lambda: (True, None)
     validate_path = create_path_validator(rules_config, app.logger) if uri_validation_enabled else lambda: (True, None)
     validate_payload_size = create_payload_size_limiter(rules_config, app.logger) if payload_limiting_enabled else lambda: (True, None)
+    validate_headers = create_header_validator(rules_config, app.logger) if header_validation_enabled else lambda: (True, None)
 
     # Apply rate limiter if enabled
     if rate_limiting_enabled:
@@ -47,7 +50,7 @@ def create_app():
         if not is_valid:
             return validation_response
 
-        return handle_proxy(proxy_config, rules_config, validate_method, validate_json, validate_payload_size)
+        return handle_proxy(proxy_config, rules_config, validate_method, validate_json, validate_headers, validate_payload_size)
 
     @app.route('/<path:sub>', methods=['GET', 'POST', 'PUT', 'DELETE'])
     def proxy_route(sub):
@@ -58,7 +61,7 @@ def create_app():
         if not is_valid:
             return validation_response
 
-        return handle_proxy(proxy_config, rules_config, validate_method, validate_json, validate_payload_size, sub=sub)
+        return handle_proxy(proxy_config, rules_config, validate_method, validate_json, validate_headers, validate_payload_size, sub=sub)
 
     return app
 
