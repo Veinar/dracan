@@ -4,6 +4,7 @@
   "method_validation_enabled": true,
   "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
   "json_validation_enabled": true,
+  "detailed_errors_enabled": false,
   "json_schema": {
     "type": "object",
     "properties": {
@@ -23,5 +24,13 @@
     "^/api/.*"
   ],
   "payload_limiting_enabled": true,
-  "max_payload_size": 1024
+  "max_payload_size": 1024,
+  "header_validation_enabled": true,
+  "required_headers": {
+    "Content-Type": "application/json"
+  },
+  "prohibited_headers": [
+    "X-Internal-Header",
+    "X-Debug-Token"
+  ]
 }
