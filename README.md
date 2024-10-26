@@ -18,9 +18,12 @@
 
 - **Request Limiting**: Dracan enables you to set limits on the number of requests processed, helping to mitigate overload and protect application performance.
 
+- **Payload Limitation**: Dracan supports payload limitation by allowing you to specify size limits for incoming request bodies. This feature helps prevent overly large requests that could impact application performance and stability.
+
 - **URI Filtering**: Dracan supports filtering of incoming request URIs by allowing you to specify exact allowed URIs or use regular expressions for pattern matching. This ensures that only requests with valid URIs are processed, adding an extra layer of security and control.
 
 - **More filtering/validation underway...**
+
 
 Dracan is intended to serve as a gatekeeper for your applications, protecting them from erroneous or redundant queries. By ensuring the integrity of incoming requests, it contributes to operational continuity and safeguards against disruptive events.
 
