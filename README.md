@@ -60,9 +60,9 @@ To start developing Dracan on your local machine, you can set up a mock service 
     ```bash
     pip install -r requirements.txt
     ```
-4. Run the Mock Service: Start the mock service provided in the Dracan package. This service is located in `dracan/test/destination_mock.py` and simulates the application your Dracan middleware will be interfacing with.
+4. Run the Mock Service: Start the mock service provided in the Dracan package. This service is located in `tests/destination_mock.py` and simulates the application your Dracan middleware will be interfacing with.
     ```bash
-    python dracan/test/destination_mock.py
+    python tests/destination_mock.py
     ```
 5. Live Debugging: With the mock service running, you can now run Dracan in your local environment. This allows you to test and debug how Dracan interacts with the mock service in real-time.
 6. Modify and Test: Make changes to Dracan's code as needed, and observe the interactions with the mock service. This setup enables you to develop efficiently and troubleshoot any issues in real-time.
@@ -88,6 +88,8 @@ but additional global disable/enable by env variables is implemented as **stub**
 METHOD_VALIDATION_ENABLED=true
 JSON_VALIDATION_ENABLED=true
 RATE_LIMITING_ENABLED=true
+URI_VALIDATION_ENABLED=true
+PAYLOAD_LIMITING_ENABLED=true
 # Optional
 LOG_LEVEL=INFO
 ```
@@ -124,30 +126,31 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 
 ```json
 {
-    "limiting_enabled": true,
-    "rate_limit": "10 per minute",
-    "method_validation_enabled": true,
-    "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
-    "json_validation_enabled": true,
-    "detailed_errors_enabled": false,
-    "json_schema": {
-        "type": "object",
-        "properties": {
-            "name": { "type": "string" },
-            "age": { "type": "number" }
-        },
-        "required": ["name", "age"]
+  "limiting_enabled": true,
+  "rate_limit": "10 per minute",
+  "method_validation_enabled": true,
+  "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
+  "json_validation_enabled": true,
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string" },
+      "age": { "type": "number" }
     },
-    "uri_validation_enabled": true,
-    "allowed_uris": [
-      "/health",
-      "/data",
-      "/update",
-      "/delete"
-    ],
-    "allowed_uri_patterns": [
-      "^/api/.*"
-    ]
+    "required": ["name", "age"]
+  },
+  "uri_validation_enabled": true,
+  "allowed_uris": [
+    "/health",
+    "/data",
+    "/update",
+    "/delete"
+  ],
+  "allowed_uri_patterns": [
+    "^/api/.*"
+  ],
+  "payload_limiting_enabled": true,
+  "max_payload_size": 1024
 }
 ```
 
@@ -161,6 +164,8 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 * **uri_validation_enabled**: A boolean flag that enables or disables URI validation for incoming requests.
 * **allowed_uris**: An array of exact URIs that are permitted. Requests that do not match these URIs will be rejected.
 * **allowed_uri_patterns**: An array of regular expressions for URI pattern matching. This allows more flexible matching of URIs that follow certain patterns (e.g., `^/api/.*` will match any URI starting with `/api/`).
+* **payload_limiting_enabled**: A boolean flag to enable or disable payload size validation
+* **max_payload_size**: Specifies maximal size of payload in `bytes`.
 
 > **In real case scenario those two JSON config files should be mounted (from config map or secret) in deployment of Dracan on k8s alike systems.**
 
