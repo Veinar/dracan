@@ -1,6 +1,6 @@
 from flask import request, jsonify
 
-def create_payload_size_validator(rules_config, logger):
+def create_payload_size_limiter(rules_config, logger):
     """
     Creates a function that validates the request payload size based on the provided rules_config.
     
