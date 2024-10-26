@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dracan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dracan
+  template:
+    metadata:
+      labels:
+        app: dracan
+    spec:
+      containers:
+      - name: dracan
+        image: <docker_repository_url>dracan:<your_tag>
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: proxy-config-volume
+          mountPath: /app/proxy_config.json
+          subPath: proxy_config.json
+        - name: rules-config-volume
+          mountPath: /app/rules_config.json
+          subPath: rules_config.json
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        envFrom:
+        - configMapRef:
+            name: dracan-env
+      volumes:
+      - name: proxy-config-volume
+        configMap:
+          name: proxy-config
+      - name: rules-config-volume
+        configMap:
+          name: rules-config

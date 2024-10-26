@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxy-config
+data:
+  proxy_config.json: |
+    {
+        "destination": {
+            "host": "<service_name>.<namespace>.svc.cluster.local",
+            "port": <service_port>,
+            "path": "<service_path>"
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rules-config
+data:
+  rules_config.json: |
+    {
+      "method_validation_enabled": true,
+      "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
+      "json_validation_enabled": true,
+      "json_schema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "age": { "type": "number" }
+        },
+        "required": ["name", "age"]
+      },
+      "uri_validation_enabled": true,
+      "allowed_uri_patterns": [
+        "^/data/.*"
+      ]
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dracan-env
+data:
+  METHOD_VALIDATION_ENABLED: "true"
+  JSON_VALIDATION_ENABLED: "true"
+  RATE_LIMITING_ENABLED: "true"
+  URI_VALIDATION_ENABLED: "true"
+  PAYLOAD_LIMITING_ENABLED: "true"
+  LOG_LEVEL: "INFO"  # Optional
