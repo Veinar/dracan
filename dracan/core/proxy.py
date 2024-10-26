@@ -53,30 +53,38 @@ def forward_request(request, sub, config):
         app.logger.error(f"Error forwarding request to {destination_url}: {str(e)}")
         raise
 
-def handle_proxy(config, rules_config, validate_method, validate_json, sub=None):
+def handle_proxy(config, validate_method, validate_json, validate_payload_size=None, sub=None):
     """
-    Handle the request forwarding after validating the method and JSON body.
+    Handle the request forwarding after validating the method, JSON body, and optional payload size.
     
     :param config: The proxy configuration for the destination service.
     :param rules_config: The rules configuration for filtering.
     :param validate_method: The method validator function.
     :param validate_json: The JSON validator function.
+    :param validate_payload_size: Optional function to validate payload size.
     :param sub: Optional substring for additional path handling.
     :return: Response object or error response.
     """
     # First, validate the method
     is_valid, validation_response = validate_method()
     if not is_valid:
-        app.logger.warning("Method validation failed")  # Log method validation failure
+        app.logger.warning("Method validation failed")
         return validation_response
 
     # Then, validate the request's JSON (if applicable)
     is_valid, validation_response = validate_json()
     if not is_valid:
-        app.logger.warning("JSON validation failed")  # Log JSON validation failure
+        app.logger.warning("JSON validation failed")
         return validation_response
 
-    # If both validations pass, forward the request
+    # Validate the payload size if the function is provided
+    if validate_payload_size:
+        is_valid, validation_response = validate_payload_size()
+        if not is_valid:
+            app.logger.warning("Payload size validation failed")
+            return validation_response
+
+    # If all validations pass, forward the request
     try:
         response = forward_request(request, sub, config)
         return (response.content, response.status_code, response.headers.items())

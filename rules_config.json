@@ -1,26 +1,27 @@
 {
-    "limiting_enabled": true,
-    "rate_limit": "10 per minute",
-    "method_validation_enabled": true,
-    "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
-    "json_validation_enabled": true,
-    "detailed_errors_enabled": false,
-    "json_schema": {
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "age": { "type": "number" }
-      },
-      "required": ["name", "age"]
+  "limiting_enabled": true,
+  "rate_limit": "10 per minute",
+  "method_validation_enabled": true,
+  "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
+  "json_validation_enabled": true,
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string" },
+      "age": { "type": "number" }
     },
-    "uri_validation_enabled": true,
-    "allowed_uris": [
-      "/health",
-      "/data",
-      "/update",
-      "/delete"
-    ],
-    "allowed_uri_patterns": [
-      "^/api/.*"
-    ]
-  }
+    "required": ["name", "age"]
+  },
+  "uri_validation_enabled": true,
+  "allowed_uris": [
+    "/health",
+    "/data",
+    "/update",
+    "/delete"
+  ],
+  "allowed_uri_patterns": [
+    "^/api/.*"
+  ],
+  "payload_limiting_enabled": true,
+  "max_payload_size": 1024
+}
