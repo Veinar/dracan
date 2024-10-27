@@ -50,7 +50,8 @@ def create_app():
         if not is_valid:
             return validation_response
 
-        return handle_proxy(proxy_config, rules_config, validate_method, validate_json, validate_headers, validate_payload_size)
+        # Call handle_proxy without sub
+        return handle_proxy(proxy_config, validate_method, validate_json, validate_headers, validate_payload_size)
 
     @app.route('/<path:sub>', methods=['GET', 'POST', 'PUT', 'DELETE'])
     def proxy_route(sub):
@@ -61,7 +62,8 @@ def create_app():
         if not is_valid:
             return validation_response
 
-        return handle_proxy(proxy_config, rules_config, validate_method, validate_json, validate_headers, validate_payload_size, sub=sub)
+        # Call handle_proxy with sub as a keyword argument
+        return handle_proxy(proxy_config, validate_method, validate_json, validate_headers, validate_payload_size, sub=sub)
 
     return app
 
