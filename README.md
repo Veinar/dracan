@@ -205,7 +205,7 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 
 Dracan includes a built-in health check feature to monitor the application's status. By default, health checks are enabled and the application listens on port **9000** at the root location (`/`). 
 
-User may customize port on which Drakan listens for HC requests setting `HEALTHCHECK_PORT`env variable, or may completly disable it using `HEALTHCHECK_DISABLED=false` env variable.
+User may customize port on which Drakan listens for HC requests setting `HEALTHCHECK_PORT`env variable, or may completly disable it using `HEALTHCHECK_DISABLED` env variable.
 
 ## Contributing
 
