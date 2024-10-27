@@ -77,6 +77,36 @@ To start developing Dracan on your local machine, you can set up a mock service 
 5. Live Debugging: With the mock service running, you can now run Dracan in your local environment. This allows you to test and debug how Dracan interacts with the mock service in real-time.
 6. Modify and Test: Make changes to Dracan's code as needed, and observe the interactions with the mock service. This setup enables you to develop efficiently and troubleshoot any issues in real-time.
 
+## Running Unit Tests
+
+Dracan includes a suite of unit tests to ensure the functionality and reliability of the code. Running these tests is an important step when contributing to the project, especially when adding new features or enhancements.
+Please note that these tests were written using ChatGPT due to my lack of experience in this area.
+
+### Prerequisites
+
+Before running the tests, make sure you have **pytest** installed in your environment. You can install it using pip:
+
+```bash
+pip install pytest
+```
+
+### Running the Tests
+
+To run the unit tests for Dracan, execute the following command from the root directory of the project:
+
+```bash
+pytest tests/
+```
+
+This command will run all the tests located in the `tests` directory and provide you with feedback on the results.
+
+### Expanding Tests
+
+As you work on expanding Dracan with new features or validations, it is essential to also expand the test suite. Ensure that any new validations or limiting functionalities are covered by corresponding tests. This practice not only helps maintain the integrity of the project but also provides assurance that existing functionality remains unaffected by new changes.
+
+We encourage you to contribute by writing additional tests and improving the overall test coverage. Your efforts in this area will help ensure that Dracan remains a reliable and robust middleware solution.
+
+
 ## Building Docker image
 
 In order to prepare Docker image inside root directory of project execute:
@@ -142,7 +172,7 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 ```json
 {
   "limiting_enabled": true,
-  "rate_limit": "10 per minute",
+  "rate_limit": "20 per minute",
   "method_validation_enabled": true,
   "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
   "json_validation_enabled": true,
