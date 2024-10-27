@@ -22,6 +22,11 @@
 
 - **URI Filtering**: Dracan supports filtering of incoming request URIs by allowing you to specify exact allowed URIs or use regular expressions for pattern matching. This ensures that only requests with valid URIs are processed, adding an extra layer of security and control.
 
+- **Header Validation**: Dracan allows for comprehensive validation of HTTP headers in incoming requests. This functionality adds another level of control, ensuring that only requests with appropriate headers are processed, which can be crucial for maintaining application security and integrity. You can specify:
+  - **Required Headers**: Ensure that specific headers must be present in the request.
+  - **Prohibited Headers**: Specify headers that should not be included in the request.
+  - **Header Matching**: Use regular expressions to validate header values or check for the presence of a header using a wildcard (`*`).
+
 - **More filtering/validation underway...**
 
 
@@ -30,6 +35,8 @@ Dracan is intended to serve as a gatekeeper for your applications, protecting th
 ## How to use it ?
 
 Dracan is designed to be implemented as middleware in Kubernetes (k8s) environments, functioning as a gatekeeper for your applications. Follow these steps to integrate Dracan into your system:
+
+**Example deployment can be seen [in example subdirectory](./example/README.md).**
 
 1. **Deployment**: Deploy Dracan in your Kubernetes cluster. It should be configured to replace the default application entry point in the Ingress controller.
 
@@ -91,8 +98,9 @@ but additional global disable/enable by env variables is implemented as **stub**
 METHOD_VALIDATION_ENABLED=true
 JSON_VALIDATION_ENABLED=true
 RATE_LIMITING_ENABLED=true
-URI_VALIDATION_ENABLED=true
 PAYLOAD_LIMITING_ENABLED=true
+URI_VALIDATION_ENABLED=true
+HEADER_VALIDATION_ENABLED=true
 # Optional
 LOG_LEVEL=INFO
 ```
@@ -134,6 +142,7 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
   "method_validation_enabled": true,
   "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
   "json_validation_enabled": true,
+  "detailed_errors_enabled": false,
   "json_schema": {
     "type": "object",
     "properties": {
@@ -141,7 +150,7 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
       "age": { "type": "number" }
     },
     "required": ["name", "age"]
-  },
+  },  
   "uri_validation_enabled": true,
   "allowed_uris": [
     "/health",
@@ -150,10 +159,21 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
     "/delete"
   ],
   "allowed_uri_patterns": [
-    "^/api/.*"
+    "^/api/.*",               
+    "^/public/[A-Za-z0-9_-]+"
   ],
   "payload_limiting_enabled": true,
-  "max_payload_size": 1024
+  "max_payload_size": 1024,
+  "header_validation_enabled": true,
+  "required_headers": {
+    "Content-Type": "application/json",
+    "X-API-KEY": "*",
+    "Authorization": "regex:^Bearer\\s[A-Za-z0-9\\-_]+\\.[A-Za-z0-9\\-_]+\\.[A-Za-z0-9\\-_]+$"
+  },
+  "prohibited_headers": [
+    "X-Internal-Header",
+    "X-Debug-Token"
+  ]
 }
 ```
 
@@ -169,6 +189,12 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 * **allowed_uri_patterns**: An array of regular expressions for URI pattern matching. This allows more flexible matching of URIs that follow certain patterns (e.g., `^/api/.*` will match any URI starting with `/api/`).
 * **payload_limiting_enabled**: A boolean flag to enable or disable payload size validation
 * **max_payload_size**: Specifies maximal size of payload in `bytes`.
+* **required_headers**: An object that defines the headers that must be present in the request. You can specify:
+  * *Exact header values* (e.g., "Content-Type": "application/json").
+  * *Wildcards* (e.g., "X-API-KEY": "*"), indicating the header must be present regardless of its value.
+  * *Regular expressions* for validating specific header values. _Must comply with [re](https://docs.python.org/3/library/re.html)_.
+
+prohibited_headers: An array of headers that should not be included in the request. If these headers are present, the request will be rejected.
 
 > **In real case scenario those two JSON config files should be mounted (from config map or secret) in deployment of Dracan on k8s alike systems.**
 
