@@ -193,8 +193,7 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
   * *Exact header values* (e.g., "Content-Type": "application/json").
   * *Wildcards* (e.g., "X-API-KEY": "*"), indicating the header must be present regardless of its value.
   * *Regular expressions* for validating specific header values. _Must comply with [re](https://docs.python.org/3/library/re.html)_.
-
-prohibited_headers: An array of headers that should not be included in the request. If these headers are present, the request will be rejected.
+* **prohibited_headers**: An array of headers that should not be included in the request. If these headers are present, the request will be rejected.
 
 > **In real case scenario those two JSON config files should be mounted (from config map or secret) in deployment of Dracan on k8s alike systems.**
 
