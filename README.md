@@ -101,6 +101,10 @@ RATE_LIMITING_ENABLED=true
 PAYLOAD_LIMITING_ENABLED=true
 URI_VALIDATION_ENABLED=true
 HEADER_VALIDATION_ENABLED=true
+# Health Check variables that should be set
+HEALTHCHECK_PORT=9000
+HEALTHCHECK_DISABLED=false
+
 # Optional
 LOG_LEVEL=INFO
 ```
@@ -196,6 +200,12 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 * **prohibited_headers**: An array of headers that should not be included in the request. If these headers are present, the request will be rejected.
 
 > **In real case scenario those two JSON config files should be mounted (from config map or secret) in deployment of Dracan on k8s alike systems.**
+
+## Health check
+
+Dracan includes a built-in health check feature to monitor the application's status. By default, health checks are enabled and the application listens on port **9000** at the root location (`/`). 
+
+User may customize port on which Drakan listens for HC requests setting `HEALTHCHECK_PORT`env variable, or may completly disable it using `HEALTHCHECK_DISABLED=false` env variable.
 
 ## Contributing
 
