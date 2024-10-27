@@ -12,7 +12,7 @@
       "age": { "type": "number" }
     },
     "required": ["name", "age"]
-  },
+  },  
   "uri_validation_enabled": true,
   "allowed_uris": [
     "/health",
@@ -21,13 +21,16 @@
     "/delete"
   ],
   "allowed_uri_patterns": [
-    "^/api/.*"
+    "^/api/.*",               
+    "^/public/[A-Za-z0-9_-]+"
   ],
   "payload_limiting_enabled": true,
   "max_payload_size": 1024,
   "header_validation_enabled": true,
   "required_headers": {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "X-API-KEY": "*",
+    "Authorization": "regex:^Bearer\\s[A-Za-z0-9\\-_]+\\.[A-Za-z0-9\\-_]+\\.[A-Za-z0-9\\-_]+$"
   },
   "prohibited_headers": [
     "X-Internal-Header",

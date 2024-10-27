@@ -1,3 +1,4 @@
+import re
 from flask import request, jsonify
 
 def create_header_validator(rules_config, logger):
@@ -21,20 +22,40 @@ def create_header_validator(rules_config, logger):
             logger.info("Header validation is disabled.")
             return True, None
 
-        # Validate required headers if they are specified
-        if required_headers:
-            for header, expected_value in required_headers.items():
-                actual_value = request.headers.get(header)
-                if actual_value != expected_value:
-                    logger.warning(f"Header validation failed: {header}='{actual_value}' (expected '{expected_value}')")
-                    return False, (jsonify({'error': f"Invalid header '{header}': Expected '{expected_value}'"}), 403)
+        # Required Headers Validation
+        for header, expected_value in required_headers.items():
+            actual_value = request.headers.get(header)
+            
+            # Check if the header is present
+            if actual_value is None:
+                logger.warning(f"Header validation failed: Missing required header '{header}'.")
+                return False, (jsonify({'error': f"Missing required header '{header}'"}), 403)
 
-        # Validate prohibited headers if they are specified
-        if prohibited_headers:
-            for header in prohibited_headers:
-                if header in request.headers:
-                    logger.warning(f"Header validation failed: Prohibited header '{header}' is present.")
-                    return False, (jsonify({'error': f"Prohibited header '{header}' must not be present"}), 403)
+            # Handle wildcard ("*") to allow any value
+            if expected_value == "*":
+                logger.info(f"Header '{header}' is present and allowed with any value.")
+                continue
+
+            # Handle regex-based validation
+            if expected_value.startswith("regex:"):
+                pattern = expected_value[6:]  # Remove 'regex:' prefix
+                if not re.match(pattern, actual_value):
+                    logger.warning(f"Header validation failed: '{header}'='{actual_value}' does not match regex '{pattern}'.")
+                    return False, (jsonify({'error': f"Invalid header '{header}': Does not match required pattern"}), 403)
+                logger.info(f"Header '{header}' matches the specified regex pattern.")
+                continue
+
+            # Exact match validation
+            if actual_value != expected_value:
+                logger.warning(f"Header validation failed: '{header}'='{actual_value}' (expected '{expected_value}').")
+                return False, (jsonify({'error': f"Invalid header '{header}': Expected '{expected_value}'"}), 403)
+            logger.info(f"Header '{header}' is present with the correct value '{expected_value}'.")
+
+        # Prohibited Headers Validation
+        for header in prohibited_headers:
+            if header in request.headers:
+                logger.warning(f"Header validation failed: Prohibited header '{header}' is present.")
+                return False, (jsonify({'error': f"Prohibited header '{header}' must not be present"}), 403)
 
         logger.info("All required headers are valid and no prohibited headers are present.")
         return True, None
