@@ -1,12 +1,12 @@
-<center>
+<p align="center">
 <img src="https://veinar.pl/dracan.png" alt="drawing" width="300"/>
 
 ![GitHub License](https://img.shields.io/github/license/Veinar/dracan?style=flat)
 ![Contrib Welcome](https://img.shields.io/badge/contributions-welcome-blue)
 ![Code style](https://img.shields.io/badge/code%20style-black-black)
-<p></p>
+
 <br>
-</center>
+</p>
 
 # What is `Dracan`?
 
@@ -33,6 +33,10 @@
 Dracan is intended to serve as a gatekeeper for your applications, protecting them from erroneous or redundant queries. By ensuring the integrity of incoming requests, it contributes to operational continuity and safeguards against disruptive events.
 
 ## How to use it ?
+
+<p align="center">
+  <img src="https://veinar.pl/dracan_diagram.gif" width="65%">
+</p>
 
 Dracan is designed to be implemented as middleware in Kubernetes (k8s) environments, functioning as a gatekeeper for your applications. Follow these steps to integrate Dracan into your system:
 
