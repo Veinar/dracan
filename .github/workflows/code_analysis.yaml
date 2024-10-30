@@ -1,0 +1,43 @@
+name: Code Analysis and Testing
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  analysis_and_tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies from requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install bandit pylint pytest  # Explicitly installing tools if not in requirements.txt
+
+      - name: Run Bandit security analysis
+        run: |
+          bandit dracan/
+        continue-on-error: false # Fail workflow if issues are found
+
+      - name: Run Pylint (exclude line-too-long warning)
+        run: |
+          pylint --disable=C0301 dracan/
+        continue-on-error: true # Allow for non-blocking warnings if needed
+
+      - name: Run Tests with Pytest
+        run: |
+          pytest tests/
+        continue-on-error: false # Fail workflow if tests fail
