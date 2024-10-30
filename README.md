@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://veinar.pl/dracan.png" alt="drawing" width="300"/>
+<img src="https://veinar.pl/dracan.png" alt="logo" width="300"/>
 
 ![GitHub License](https://img.shields.io/github/license/Veinar/dracan?style=flat)
 ![Contrib Welcome](https://img.shields.io/badge/contributions-welcome-blue)
@@ -29,8 +29,13 @@
 
 - **More filtering/validation underway...**
 
-
 Dracan is intended to serve as a gatekeeper for your applications, protecting them from erroneous or redundant queries. By ensuring the integrity of incoming requests, it contributes to operational continuity and safeguards against disruptive events.
+
+##  Why use Dracan?
+
+Dracan is a lightweight yet powerful middleware security solution for handling requests targeted at small to mid-sized development teams and independent projects. In a simple configuration file (understandable by developers), request validation can be set up with rate limiting, payload control, and traffic filtering enabled without advanced DevOps expertise or heavy infrastructure like WAF (Web application Firewall). You focus on creating good filters in `rules_config.json`, rest is on us.
+
+Ideal for use for applications hosted on Kubernetes or GKE, Dracan offers essential security features to protect internal requests so that teams can focus on development. Because of its modular design, you are sure to be able to customize security needs with ease and speed. Dracan is both friendly and powerful for application protection.
 
 ## How to use it ?
 
@@ -118,6 +123,8 @@ In order to prepare Docker image inside root directory of project execute:
 docker build . -t dracan:latest
 ```
 > You may want to change name or tag for this build command
+
+**Docker image is present at [DockerHub](https://hub.docker.com/r/veinar/dracan).** For ease of use it is shipped without config JSONs. Remember to provide them on runtime!
 
 ### Docker environmental variables
 
