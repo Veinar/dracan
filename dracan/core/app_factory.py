@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from flask import Flask
 from .proxy import load_proxy_config, load_rules_config, handle_proxy
@@ -13,6 +14,13 @@ def create_app():
     """
     Factory function to create a Flask app based on environment settings.
     """
+    # Ensure configuration files exist before starting the app
+    required_files = ["rules_config.json", "proxy_config.json"]
+    for file in required_files:
+        if not os.path.exists(file):
+            print(f"Error: Required configuration file '{file}' is missing.")
+            sys.exit(1)
+
     app = Flask(__name__)
 
     # Set up logging
