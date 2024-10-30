@@ -1,6 +1,10 @@
 from flask import request, jsonify, current_app as app
 import requests
 import json
+import os
+
+# Set a default timeout in seconds if PROXY_TIMEOUT is not specified in the environment
+PROXY_TIMEOUT = int(os.getenv("PROXY_TIMEOUT", 180))
 
 # Load the proxy configuration from the JSON file
 def load_proxy_config(file_path='proxy_config.json'):
@@ -36,13 +40,13 @@ def forward_request(request, config, sub=None):
     # Forward the request based on its method
     try:
         if request.method == 'GET':
-            response = requests.get(destination_url, headers=request.headers, params=request.args)
+            response = requests.get(destination_url, headers=request.headers, params=request.args, timeout=PROXY_TIMEOUT)
         elif request.method == 'POST':
-            response = requests.post(destination_url, headers=request.headers, json=request.get_json())
+            response = requests.post(destination_url, headers=request.headers, json=request.get_json(), timeout=PROXY_TIMEOUT)
         elif request.method == 'PUT':
-            response = requests.put(destination_url, headers=request.headers, json=request.get_json())
+            response = requests.put(destination_url, headers=request.headers, json=request.get_json(), timeout=PROXY_TIMEOUT)
         elif request.method == 'DELETE':
-            response = requests.delete(destination_url, headers=request.headers)
+            response = requests.delete(destination_url, headers=request.headers, timeout=PROXY_TIMEOUT)
         
         app.logger.info(f"Received {response.status_code} from {destination_url}")  # Log response status
         return response

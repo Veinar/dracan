@@ -135,6 +135,8 @@ RATE_LIMITING_ENABLED=true
 PAYLOAD_LIMITING_ENABLED=true
 URI_VALIDATION_ENABLED=true
 HEADER_VALIDATION_ENABLED=true
+# Proxy TimeOut can be set or it will be 180 seconds by default
+PROXY_TIMEOUT=180
 # Health Check variables that should be set
 HEALTHCHECK_PORT=9000
 HEALTHCHECK_DISABLED=false
