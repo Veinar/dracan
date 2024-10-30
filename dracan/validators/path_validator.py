@@ -1,5 +1,5 @@
-from flask import request, jsonify
 import re
+from flask import request, jsonify
 
 def create_path_validator(rules_config, logger):
     """

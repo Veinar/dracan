@@ -1,7 +1,7 @@
-from flask import request, jsonify, current_app as app
 import requests
 import json
 import os
+from flask import request, jsonify, current_app as app
 
 # Set a default timeout in seconds if PROXY_TIMEOUT is not specified in the environment
 PROXY_TIMEOUT = int(os.getenv("PROXY_TIMEOUT", 180))
@@ -47,7 +47,7 @@ def forward_request(request, config, sub=None):
             response = requests.put(destination_url, headers=request.headers, json=request.get_json(), timeout=PROXY_TIMEOUT)
         elif request.method == 'DELETE':
             response = requests.delete(destination_url, headers=request.headers, timeout=PROXY_TIMEOUT)
-        
+
         app.logger.info(f"Received {response.status_code} from {destination_url}")  # Log response status
         return response
 

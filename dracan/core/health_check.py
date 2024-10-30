@@ -3,13 +3,13 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 class HealthCheckHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_get(self):
         if self.path == "/":
             # Send a 200 OK response
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-            
+
             # Write JSON response
             response = json.dumps({"status": "running"})
             self.wfile.write(response.encode())
