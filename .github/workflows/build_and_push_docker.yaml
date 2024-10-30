@@ -3,9 +3,9 @@ name: Docker Build
 on:
   push:
     branches:
-    #  - develop    # Run on all pushes to develop
+      - develop    # Run on all pushes to develop
     tags:
-    #  - 'v*'       # Run on tagged pushes (e.g., v1.0) on any branch, but will be filtered to main below
+      - 'v*'       # Run on tagged pushes, filtered to main below
 
 jobs:
   build_docker:
@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Modify .dockerignore to uncomment specific lines
         run: |
@@ -24,10 +24,10 @@ jobs:
         run: cat .dockerignore
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_LOGIN }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -38,7 +38,6 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/heads/develop ]]; then
             TAG="latest"
           elif [[ "${GITHUB_REF}" == refs/tags/* && "${GITHUB_REF_NAME}" == "main" ]]; then
-            # Extract the tag name for main branch tags
             TAG="${GITHUB_REF#refs/tags/}"
           else
             echo "This workflow is not configured to run for this ref: ${GITHUB_REF}"
