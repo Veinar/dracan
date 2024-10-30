@@ -30,6 +30,9 @@ def create_app():
     proxy_config = load_proxy_config()
     rules_config = load_rules_config()
 
+    # Read allowed HTTP methods from rules_config or use defaults if not specified
+    allowed_methods = rules_config.get("allowed_methods", ["GET", "POST", "PUT", "DELETE"])
+
     # Read environment variables or default settings
     method_validation_enabled = os.getenv("METHOD_VALIDATION_ENABLED", "true").lower() == "true"
     json_validation_enabled = os.getenv("JSON_VALIDATION_ENABLED", "true").lower() == "true"
@@ -50,7 +53,7 @@ def create_app():
         create_limiter(app, rules_config)
 
     # Route handling
-    @app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+    @app.route('/', methods=allowed_methods)
     def proxy_route_without_sub():
         app.logger.info("Proxying request without sub-path")
 
@@ -62,7 +65,7 @@ def create_app():
         # Call handle_proxy without sub
         return handle_proxy(proxy_config, validate_method, validate_json, validate_headers, validate_payload_size)
 
-    @app.route('/<path:sub>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+    @app.route('/<path:sub>', methods=allowed_methods)
     def proxy_route(sub):
         app.logger.info(f"Proxying request to sub-path: {sub}")
 

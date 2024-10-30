@@ -172,3 +172,46 @@ def test_extra_headers_allowed(run_dracan_server):
     response = requests.post("http://127.0.0.1:5000/data", json=valid_data, headers=headers, timeout=5)
     assert response.status_code == 201
     assert response.json()["status"] == "success"
+
+# Testing unsupported HTTP methods on the /health endpoint
+def test_unsupported_methods_on_health(run_dracan_server):
+    headers = {"Content-Type": "application/json", "X-API-KEY": "test_key", "Authorization": "Bearer token123.abc.xyz"}
+    url = "http://127.0.0.1:5000/health"
+
+    # PATCH
+    response = requests.patch(url, headers=headers, timeout=5)
+    assert response.status_code == 405  # Method Not Allowed
+
+    # HEAD
+    response = requests.head(url, headers=headers, timeout=5)
+    assert response.status_code == 405  # Method Not Allowed
+
+    # TRACE
+    response = requests.request("TRACE", url, headers=headers, timeout=5)
+    assert response.status_code == 405  # Method Not Allowed
+
+    # CONNECT (Using a low-level request for unsupported method)
+    response = requests.request("CONNECT", url, headers=headers, timeout=5)
+    assert response.status_code == 405  # Method Not Allowed
+
+
+# Testing unsupported HTTP methods on the /data endpoint
+def test_unsupported_methods_on_data(run_dracan_server):
+    headers = {"Content-Type": "application/json", "X-API-KEY": "test_key", "Authorization": "Bearer token123.abc.xyz"}
+    url = "http://127.0.0.1:5000/data"
+
+    # PATCH
+    response = requests.patch(url, headers=headers, timeout=5)
+    assert response.status_code == 405  # Method Not Allowed
+
+    # HEAD
+    response = requests.head(url, headers=headers, timeout=5)
+    assert response.status_code == 405  # Method Not Allowed
+
+    # TRACE
+    response = requests.request("TRACE", url, headers=headers, timeout=5)
+    assert response.status_code == 405  # Method Not Allowed
+
+    # CONNECT
+    response = requests.request("CONNECT", url, headers=headers, timeout=5)
+    assert response.status_code == 405  # Method Not Allowed
