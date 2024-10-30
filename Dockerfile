@@ -30,6 +30,8 @@ COPY . /app/
 
 # Expose the port Flask will run on
 EXPOSE 5000
+# Expose the port HealthCheck will run on
+EXPOSE 9000
 
 # Define the command to run the application using gunicorn
 CMD ["gunicorn", "-b", "0.0.0.0:5000", "main:app", "--workers=4"]

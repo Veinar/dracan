@@ -25,7 +25,7 @@ def create_header_validator(rules_config, logger):
         # Required Headers Validation
         for header, expected_value in required_headers.items():
             actual_value = request.headers.get(header)
-            
+
             # Check if the header is present
             if actual_value is None:
                 logger.warning(f"Header validation failed: Missing required header '{header}'.")

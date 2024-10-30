@@ -1,3 +1,5 @@
+import os
+import logging
 from flask import Flask
 from .proxy import load_proxy_config, load_rules_config, handle_proxy
 from ..middleware.limiter import create_limiter
@@ -6,7 +8,6 @@ from ..validators.method_validator import create_method_validator
 from ..validators.path_validator import create_path_validator
 from ..validators.headers_validator import create_header_validator
 from ..middleware.payload_limiter import create_payload_size_limiter
-import os
 
 def create_app():
     """
@@ -43,14 +44,15 @@ def create_app():
     # Route handling
     @app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
     def proxy_route_without_sub():
-        app.logger.info(f"Proxying request without sub-path")
+        app.logger.info("Proxying request without sub-path")
 
        # Validate path before handling proxy
         is_valid, validation_response = validate_path()
         if not is_valid:
             return validation_response
 
-        return handle_proxy(proxy_config, rules_config, validate_method, validate_json, validate_headers, validate_payload_size)
+        # Call handle_proxy without sub
+        return handle_proxy(proxy_config, validate_method, validate_json, validate_headers, validate_payload_size)
 
     @app.route('/<path:sub>', methods=['GET', 'POST', 'PUT', 'DELETE'])
     def proxy_route(sub):
@@ -61,7 +63,8 @@ def create_app():
         if not is_valid:
             return validation_response
 
-        return handle_proxy(proxy_config, rules_config, validate_method, validate_json, validate_headers, validate_payload_size, sub=sub)
+        # Call handle_proxy with sub as a keyword argument
+        return handle_proxy(proxy_config, validate_method, validate_json, validate_headers, validate_payload_size, sub=sub)
 
     return app
 
@@ -73,7 +76,6 @@ def setup_logging(app):
     log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 
     # Configure logging for the application
-    import logging
     logging.basicConfig(
         level=log_level,  # Set the logging level
         format="%(asctime)s [%(levelname)s] %(message)s",  # Log format

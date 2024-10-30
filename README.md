@@ -1,12 +1,12 @@
-<center>
+<p align="center">
 <img src="https://veinar.pl/dracan.png" alt="drawing" width="300"/>
 
 ![GitHub License](https://img.shields.io/github/license/Veinar/dracan?style=flat)
 ![Contrib Welcome](https://img.shields.io/badge/contributions-welcome-blue)
 ![Code style](https://img.shields.io/badge/code%20style-black-black)
-<p></p>
+
 <br>
-</center>
+</p>
 
 # What is `Dracan`?
 
@@ -33,6 +33,10 @@
 Dracan is intended to serve as a gatekeeper for your applications, protecting them from erroneous or redundant queries. By ensuring the integrity of incoming requests, it contributes to operational continuity and safeguards against disruptive events.
 
 ## How to use it ?
+
+<p align="center">
+  <img src="https://veinar.pl/dracan_diagram.gif" width="65%">
+</p>
 
 Dracan is designed to be implemented as middleware in Kubernetes (k8s) environments, functioning as a gatekeeper for your applications. Follow these steps to integrate Dracan into your system:
 
@@ -77,6 +81,36 @@ To start developing Dracan on your local machine, you can set up a mock service 
 5. Live Debugging: With the mock service running, you can now run Dracan in your local environment. This allows you to test and debug how Dracan interacts with the mock service in real-time.
 6. Modify and Test: Make changes to Dracan's code as needed, and observe the interactions with the mock service. This setup enables you to develop efficiently and troubleshoot any issues in real-time.
 
+## Running Unit Tests
+
+Dracan includes a suite of unit tests to ensure the functionality and reliability of the code. Running these tests is an important step when contributing to the project, especially when adding new features or enhancements.
+Please note that these tests were written using ChatGPT due to my lack of experience in this area.
+
+### Prerequisites
+
+Before running the tests, make sure you have **pytest** installed in your environment. You can install it using pip:
+
+```bash
+pip install pytest
+```
+
+### Running the Tests
+
+To run the unit tests for Dracan, execute the following command from the root directory of the project:
+
+```bash
+pytest tests/
+```
+
+This command will run all the tests located in the `tests` directory and provide you with feedback on the results.
+
+### Expanding Tests
+
+As you work on expanding Dracan with new features or validations, it is essential to also expand the test suite. Ensure that any new validations or limiting functionalities are covered by corresponding tests. This practice not only helps maintain the integrity of the project but also provides assurance that existing functionality remains unaffected by new changes.
+
+We encourage you to contribute by writing additional tests and improving the overall test coverage. Your efforts in this area will help ensure that Dracan remains a reliable and robust middleware solution.
+
+
 ## Building Docker image
 
 In order to prepare Docker image inside root directory of project execute:
@@ -101,6 +135,12 @@ RATE_LIMITING_ENABLED=true
 PAYLOAD_LIMITING_ENABLED=true
 URI_VALIDATION_ENABLED=true
 HEADER_VALIDATION_ENABLED=true
+# Proxy TimeOut can be set or it will be 180 seconds by default
+PROXY_TIMEOUT=180
+# Health Check variables that should be set
+HEALTHCHECK_PORT=9000
+HEALTHCHECK_DISABLED=false
+
 # Optional
 LOG_LEVEL=INFO
 ```
@@ -138,7 +178,7 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 ```json
 {
   "limiting_enabled": true,
-  "rate_limit": "10 per minute",
+  "rate_limit": "20 per minute",
   "method_validation_enabled": true,
   "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
   "json_validation_enabled": true,
@@ -196,6 +236,12 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 * **prohibited_headers**: An array of headers that should not be included in the request. If these headers are present, the request will be rejected.
 
 > **In real case scenario those two JSON config files should be mounted (from config map or secret) in deployment of Dracan on k8s alike systems.**
+
+## Health check
+
+Dracan includes a built-in health check feature to monitor the application's status. By default, health checks are enabled and the application listens on port **9000** at the root location (`/`). 
+
+User may customize port on which Drakan listens for HC requests setting `HEALTHCHECK_PORT`env variable, or may completly disable it using `HEALTHCHECK_DISABLED` env variable.
 
 ## Contributing
 
