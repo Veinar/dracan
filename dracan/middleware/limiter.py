@@ -2,7 +2,7 @@ import warnings
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-def create_limiter(app, rules_config,):
+def create_limiter(app, rules_config):
     """
     Initialize and apply the rate limiter if limiting is enabled.
     :param app: The Flask app instance.
@@ -21,6 +21,6 @@ def create_limiter(app, rules_config,):
         )
         app.logger.info(f"Rate limiting enabled with limit: {rate_limit}")
         return limiter
-    else:
-        app.logger.info("Rate limiting is disabled")
-        return None
+
+    app.logger.info("Rate limiting is disabled")
+    return None

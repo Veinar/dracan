@@ -1,6 +1,6 @@
-import requests
 import json
 import os
+import requests
 from flask import request, jsonify, current_app as app
 
 # Set a default timeout in seconds if PROXY_TIMEOUT is not specified in the environment
