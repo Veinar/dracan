@@ -3,6 +3,7 @@ import sys
 import logging
 from flask import Flask
 from .proxy import load_proxy_config, load_rules_config, handle_proxy
+from ..utils.config_compliance_check import check_env_config_conflicts
 from ..middleware.limiter import create_limiter
 from ..validators.json_validator import create_json_validator
 from ..validators.method_validator import create_method_validator
@@ -21,14 +22,18 @@ def create_app():
             print(f"Error: Required configuration file '{file}' is missing.")
             sys.exit(1)
 
+    # Load configurations
+    proxy_config = load_proxy_config()
+    rules_config = load_rules_config()
+
+    # Check if there is no mismatch between env and rules_config.json entries
+    check_env_config_conflicts(rules_config)
+
+    # Start app after reading config files
     app = Flask(__name__)
 
     # Set up logging
     setup_logging(app)
-
-    # Load configurations
-    proxy_config = load_proxy_config()
-    rules_config = load_rules_config()
 
     # Read allowed HTTP methods from rules_config or use defaults if not specified
     allowed_methods = rules_config.get("allowed_methods", ["GET", "POST", "PUT", "DELETE"])
