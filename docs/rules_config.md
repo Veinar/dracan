@@ -308,7 +308,7 @@ Example:
 `prohibited_headers`   
 
 Description: *Defines headers that should not be included in requests.*   
-Possible values: *array of allowed URIs patterns (even single URI should be passed as an array)*
+Possible values: *array of prohibited headers (even single header should be passed as an array)*
 
 Example:
 ```json
