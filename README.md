@@ -2,8 +2,10 @@
 <img src="https://veinar.pl/dracan.png" alt="logo" width="300"/>
 
 ![GitHub License](https://img.shields.io/github/license/Veinar/dracan?style=flat)
-![Contrib Welcome](https://img.shields.io/badge/contributions-welcome-blue)
 ![Code style](https://img.shields.io/badge/code%20style-black-black)
+![Docker Image Size](https://img.shields.io/docker/image-size/veinar/dracan)
+![Docker Pulls](https://img.shields.io/docker/pulls/veinar/dracan?color=yellow)
+![Contrib Welcome](https://img.shields.io/badge/contributions-welcome-blue)
 
 <br>
 </p>

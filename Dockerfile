@@ -1,4 +1,4 @@
-# Use the official Python 3.14.0 slim image
+# Use the official Python alpine image
 FROM python:alpine
 
 # Set environment variables for production
