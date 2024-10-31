@@ -1,7 +1,9 @@
 import os
+import sys
 import logging
 from flask import Flask
 from .proxy import load_proxy_config, load_rules_config, handle_proxy
+from ..utils.config_compliance_check import check_env_config_conflicts
 from ..middleware.limiter import create_limiter
 from ..validators.json_validator import create_json_validator
 from ..validators.method_validator import create_method_validator
@@ -13,14 +15,28 @@ def create_app():
     """
     Factory function to create a Flask app based on environment settings.
     """
+    # Ensure configuration files exist before starting the app
+    required_files = ["rules_config.json", "proxy_config.json"]
+    for file in required_files:
+        if not os.path.exists(file):
+            print(f"Error: Required configuration file '{file}' is missing.")
+            sys.exit(1)
+
+    # Load configurations
+    proxy_config = load_proxy_config()
+    rules_config = load_rules_config()
+
+    # Check if there is no mismatch between env and rules_config.json entries
+    check_env_config_conflicts(rules_config)
+
+    # Start app after reading config files
     app = Flask(__name__)
 
     # Set up logging
     setup_logging(app)
 
-    # Load configurations
-    proxy_config = load_proxy_config()
-    rules_config = load_rules_config()
+    # Read allowed HTTP methods from rules_config or use defaults if not specified
+    allowed_methods = rules_config.get("allowed_methods", ["GET", "POST", "PUT", "DELETE"])
 
     # Read environment variables or default settings
     method_validation_enabled = os.getenv("METHOD_VALIDATION_ENABLED", "true").lower() == "true"
@@ -42,7 +58,7 @@ def create_app():
         create_limiter(app, rules_config)
 
     # Route handling
-    @app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+    @app.route('/', methods=allowed_methods)
     def proxy_route_without_sub():
         app.logger.info("Proxying request without sub-path")
 
@@ -54,7 +70,7 @@ def create_app():
         # Call handle_proxy without sub
         return handle_proxy(proxy_config, validate_method, validate_json, validate_headers, validate_payload_size)
 
-    @app.route('/<path:sub>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+    @app.route('/<path:sub>', methods=allowed_methods)
     def proxy_route(sub):
         app.logger.info(f"Proxying request to sub-path: {sub}")
 

@@ -2,6 +2,20 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
+# Root endpoint to test the base proxy route without a sub-path
+@app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def root_endpoint():
+    if request.method == 'GET':
+        return jsonify({'status': 'root accessed', 'method': 'GET'}), 200
+    elif request.method == 'POST':
+        data = request.get_json()
+        return jsonify({'status': 'root accessed', 'method': 'POST', 'received_data': data}), 201
+    elif request.method == 'PUT':
+        data = request.get_json()
+        return jsonify({'status': 'root accessed', 'method': 'PUT', 'update_info': data}), 200
+    elif request.method == 'DELETE':
+        return jsonify({'status': 'root accessed', 'method': 'DELETE', 'message': 'Resource deleted'}), 204
+
 # Simple /health endpoint to return a health status
 @app.route('/health', methods=['GET'])
 def health_check():

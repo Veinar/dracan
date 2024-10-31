@@ -15,6 +15,7 @@
   },  
   "uri_validation_enabled": true,
   "allowed_uris": [
+    "/",
     "/health",
     "/data",
     "/update",

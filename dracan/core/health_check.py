@@ -15,7 +15,7 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
                 JSON payload {"status": "running"} if the path is "/".
                 Otherwise, responds with a 404 Not Found.
     """
-    def do_get(self):
+    def do_GET(self):
         if self.path == "/":
             # Send a 200 OK response
             self.send_response(200)
