@@ -33,8 +33,8 @@ def test_rate_limiting(run_dracan_server):
 
     # Exceed the rate limit of 20 per minute by sending more than 20 requests within a minute
     exceeded_rate = False
-    for i in range(25):
-        response = requests.get(url, headers=headers)
+    for _ in range(25):
+        response = requests.get(url, headers=headers, timeout=15)
         if response.status_code == 429:  # Rate limit exceeded
             exceeded_rate = True
             break

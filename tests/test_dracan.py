@@ -235,10 +235,6 @@ def test_root_put_request(run_dracan_server):
     response = requests.put("http://127.0.0.1:5000/", json=data, headers=headers, timeout=5)
     assert response.status_code == 200
     assert response.json() == {'status': 'root accessed', 'method': 'PUT', 'update_info': data}
-
-def test_root_delete_request(run_dracan_server):
-    headers = {"Content-Type": "application/json", "X-API-KEY": "test_key", "Authorization": "Bearer token123.abc.xyz"}
-    response = requests.delete("http://127.0.0.1:5000/", headers=headers, timeout=5)
     
 def test_root_delete_request(run_dracan_server):
     headers = {"Content-Type": "application/json", "X-API-KEY": "test_key", "Authorization": "Bearer token123.abc.xyz"}

@@ -1,5 +1,4 @@
 import pytest
-import os
 from dracan.utils.config_compliance_check import check_env_config_conflicts
 
 @pytest.fixture

@@ -3,6 +3,7 @@
 
 ![GitHub License](https://img.shields.io/github/license/Veinar/dracan?style=flat)
 ![Code style](https://img.shields.io/badge/code%20style-black-black)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/41bf10729dcc4e209dded4c298d945d5)](https://app.codacy.com/gh/Veinar/dracan/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![codecov](https://codecov.io/github/Veinar/dracan/graph/badge.svg?token=LNPKYPY8RB)](https://codecov.io/github/Veinar/dracan)
 ![Docker Image Size](https://img.shields.io/docker/image-size/veinar/dracan)
 ![Docker Pulls](https://img.shields.io/docker/pulls/veinar/dracan?color=yellow)
