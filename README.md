@@ -174,6 +174,7 @@ The `proxy_config.json` file specifies where Dracan should proxy incoming traffi
     }
 }
 ```
+**Expanded documentation about fields and values can be found [HERE](./docs/proxy_config.md).**
 
 * **host**: The address of the destination service where Dracan will forward the requests. This can be an IP address or a domain name.
 > Make sure of correct DNS settings!
@@ -228,6 +229,8 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 }
 ```
 
+**Expanded documentation about fields and values can be found [HERE](./docs/rules_config.md).**
+
 * **limiting_enabled**: A boolean value that enables or disables rate limiting for incoming requests.
 * **rate_limit**: Specifies the allowed rate of requests (e.g., "10 per minute"), how to check possible rates is described [here](https://github.com/alisaifee/flask-limiter?tab=readme-ov-file#inspect-the-limits-using-the-command-line-interface).
 * **allowed_methods**: An array of HTTP methods that are permitted for incoming requests (e.g., ["GET", "POST", "PUT", "DELETE"]).
@@ -267,3 +270,32 @@ We warmly welcome contributions to Dracan! Whether you're a seasoned developer o
 - **Share Your Ideas**: Have a great idea for a feature or enhancement? We’d love to hear it! Start a discussion, and let's explore it together.
 
 By contributing, you’re not only helping to improve Dracan but also make one man happier. Thank you for your interest and support—together, we can make Dracan even better!
+
+> :hearts: We welcome contributions from everyone, especially if you’re new to open-source! Whether it’s fixing a typo, suggesting an idea, or spotting a bug, every contribution counts, and we’re here to support you along the way! :rocket:
+
+## How to Contribute ?
+
+Contributing to our project is a great way to learn, share, and improve your skills! We welcome contributions from everyone, whether you're a seasoned developer or a newbie. Here’s a quick guide on how to get started:
+
+1. **Fork the Repository**: Start by forking the main repository to your GitHub account. This creates a personal copy where you can make changes.
+
+2. **Clone Your Fork**: Clone the forked repository to your local machine. In your terminal, run:
+```bash
+git clone https://github.com/your_username_goes_here/dracan.git
+```
+3. **Make preparations of dev environment** follow instructions described [here](#local-development).
+
+4. **Create a New Branch:** It’s a good idea to create a new branch for each feature or bug fix. This keeps your work organized and makes it easier for others to review. Run:
+```bash
+git checkout -b branch-name-goes-here
+```
+
+5. **Make Changes:** Now you can start coding! Follow any project guidelines, such as coding standards or testing requirements.
+6. **Commit and Push:** Once your changes are ready, commit them with a clear message explaining the work you’ve done, then push your branch to GitHub:
+```bash
+git add .
+git commit -m "Describe your changes"
+git push -u origin branch-name-goes-here
+```
+7. **Submit a Pull Request:** Go to the original repository on GitHub, and you’ll see an option to create a new pull request (PR) from your branch. Add a clear description of your changes and submit the PR.
+8. **Engage in Review:** Be open to feedback! Project maintainers may request some changes before your code can be merged.
