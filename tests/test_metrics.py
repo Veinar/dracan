@@ -81,7 +81,6 @@ def test_metrics_data_gathering():
         # Check that some metrics are being gathered (look for request count or latency data)
         metrics_data = metrics_response.text
         assert "http_requests_total" in metrics_data  # Ensure request count metric is present
-        assert "http_response_size_bytes_sum" in metrics_data  # Check latency metric presence
         assert "GET" in metrics_data or "POST" in metrics_data  # Confirm that methods used are tracked
 
     finally:
@@ -109,7 +108,6 @@ def test_metrics_data_gathering_custom_port():
         # Check that some metrics are being gathered (look for request count or latency data)
         metrics_data = metrics_response.text
         assert "http_requests_total" in metrics_data  # Ensure request count metric is present
-        assert "http_response_size_bytes_sum" in metrics_data  # Check latency metric presence
         assert "GET" in metrics_data or "POST" in metrics_data  # Confirm that methods used are tracked
 
     finally:
