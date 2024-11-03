@@ -10,6 +10,7 @@ from ..validators.method_validator import create_method_validator
 from ..validators.path_validator import create_path_validator
 from ..validators.headers_validator import create_header_validator
 from ..middleware.payload_limiter import create_payload_size_limiter
+from ..utils.metrics import start_metrics_server, register_metrics
 
 def create_app():
     """
@@ -34,6 +35,13 @@ def create_app():
 
     # Set up logging
     setup_logging(app)
+
+    # Ensure metrics server only starts if explicitly enabled
+    if os.getenv("ALLOW_METRICS_ENDPOINT", "false").lower() == "true":
+        metrics_port = int(os.getenv("METRICS_PORT", 9100))
+        start_metrics_server(port=metrics_port)
+        register_metrics(app)  # Register the metrics request handlers
+        app.logger.info(f"Metrics endpoint is enabled and running on port {metrics_port}, path /metrics.")
 
     # Read allowed HTTP methods from rules_config or use defaults if not specified
     allowed_methods = rules_config.get("allowed_methods", ["GET", "POST", "PUT", "DELETE"])
