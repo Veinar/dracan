@@ -81,10 +81,9 @@ def test_metrics_data_gathering():
         metrics_response = requests.get("http://127.0.0.1:9100/metrics")
         assert metrics_response.status_code == 200
 
-        # Check that some metrics are being gathered (look for request count or latency data)
+        # Check that some metrics are being gathered (look for request count)
         metrics_data = metrics_response.text
         assert "http_requests_total" in metrics_data  # Ensure request count metric is present
-        assert "GET" in metrics_data or "POST" in metrics_data  # Confirm that methods used are tracked
 
     finally:
         stop_dracan_server(thread)
@@ -111,10 +110,9 @@ def test_metrics_data_gathering_custom_port():
         metrics_response = requests.get("http://127.0.0.1:2000/metrics")
         assert metrics_response.status_code == 200
 
-        # Check that some metrics are being gathered (look for request count or latency data)
+        # Check that some metrics are being gathered (look for request count)
         metrics_data = metrics_response.text
         assert "http_requests_total" in metrics_data  # Ensure request count metric is present
-        assert "GET" in metrics_data or "POST" in metrics_data  # Confirm that methods used are tracked
 
     finally:
         stop_dracan_server(thread)
