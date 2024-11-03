@@ -74,6 +74,9 @@ def test_metrics_data_gathering():
         requests.get("http://127.0.0.1:5000/")
         requests.post("http://127.0.0.1:5000/data", json={"name": "Alice"})
         
+        # Allow some time for metrics to be recorded
+        time.sleep(3)
+
         # Fetch metrics data from the metrics endpoint
         metrics_response = requests.get("http://127.0.0.1:9100/metrics")
         assert metrics_response.status_code == 200
@@ -100,7 +103,10 @@ def test_metrics_data_gathering_custom_port():
         # Make some requests to the main Dracan app (proxy routes)
         requests.get("http://127.0.0.1:5000/")
         requests.post("http://127.0.0.1:5000/data", json={"name": "Alice"})
-        
+
+        # Allow some time for metrics to be recorded
+        time.sleep(3)
+
         # Fetch metrics data from the metrics endpoint
         metrics_response = requests.get("http://127.0.0.1:2000/metrics")
         assert metrics_response.status_code == 200
