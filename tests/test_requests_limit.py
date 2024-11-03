@@ -45,5 +45,5 @@ def test_rate_limiting(run_dracan_server):
 
     # Wait a little over the rate limit reset period to verify that requests succeed afterward
     time.sleep(61)  # Waiting 61 seconds to ensure the limit resets
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=15)
     assert response.status_code == 200, "Request did not succeed after rate limit reset."

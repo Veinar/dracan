@@ -1,5 +1,4 @@
 import os
-import pytest
 import requests
 import time
 from threading import Thread
@@ -40,7 +39,7 @@ def test_metrics_default_port_enabled():
     })
 
     try:
-        response = requests.get("http://127.0.0.1:9100/metrics")
+        response = requests.get("http://127.0.0.1:9100/metrics", timeout=15)
         assert response.status_code == 200
     finally:
         stop_dracan_server(thread)
@@ -55,7 +54,7 @@ def test_metrics_custom_port_enabled():
     })
 
     try:
-        response = requests.get("http://127.0.0.1:2000/metrics")
+        response = requests.get("http://127.0.0.1:2000/metrics", timeout=15)
         assert response.status_code == 200
     finally:
         stop_dracan_server(thread)
@@ -71,14 +70,14 @@ def test_metrics_data_gathering():
 
     try:
         # Make some requests to the main Dracan app (proxy routes)
-        requests.get("http://127.0.0.1:5000/")
-        requests.post("http://127.0.0.1:5000/data", json={"name": "Alice"})
+        requests.get("http://127.0.0.1:5000/", timeout=15)
+        requests.post("http://127.0.0.1:5000/data", json={"name": "Alice"}, timeout=15)
         
         # Allow some time for metrics to be recorded
         time.sleep(3)
 
         # Fetch metrics data from the metrics endpoint
-        metrics_response = requests.get("http://127.0.0.1:9100/metrics")
+        metrics_response = requests.get("http://127.0.0.1:9100/metrics", timeout=15)
         assert metrics_response.status_code == 200
 
         # Check that some metrics are being gathered (look for request count)
@@ -100,14 +99,14 @@ def test_metrics_data_gathering_custom_port():
 
     try:
         # Make some requests to the main Dracan app (proxy routes)
-        requests.get("http://127.0.0.1:5000/")
-        requests.post("http://127.0.0.1:5000/data", json={"name": "Alice"})
+        requests.get("http://127.0.0.1:5000/", timeout=15)
+        requests.post("http://127.0.0.1:5000/data", json={"name": "Alice"}, timeout=15)
 
         # Allow some time for metrics to be recorded
         time.sleep(3)
 
         # Fetch metrics data from the metrics endpoint
-        metrics_response = requests.get("http://127.0.0.1:2000/metrics")
+        metrics_response = requests.get("http://127.0.0.1:2000/metrics", timeout=15)
         assert metrics_response.status_code == 200
 
         # Check that some metrics are being gathered (look for request count)
