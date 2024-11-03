@@ -152,6 +152,9 @@ PROXY_TIMEOUT=180
 # Health Check variables that should be set
 HEALTHCHECK_PORT=9000
 HEALTHCHECK_DISABLED=false
+# Metrics variables
+ALLOW_METRICS_ENDPOINT=true
+METRICS_PORT=9100
 
 # Optional
 LOG_LEVEL=INFO
@@ -257,6 +260,31 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 Dracan includes a built-in health check feature to monitor the application's status. By default, health checks are enabled and the application listens on port **9000** at the root location (`/`). 
 
 User may customize port on which Drakan listens for HC requests setting `HEALTHCHECK_PORT`env variable, or may completly disable it using `HEALTHCHECK_DISABLED` env variable.
+
+## Metrics Collection
+
+Dracan offers an optional metrics endpoint for tracking application performance and request data, which can be integrated with Prometheus for monitoring. :chart_with_upwards_trend:
+
+### Key Features
+- **Request Count**: Tracks the number of HTTP requests by method and status.
+- **Request Latency**: Measures the response times for different endpoints.
+- **Request and Response Sizes**: Analyzes data usage for incoming and outgoing requests.
+
+### Enabling Metrics
+Metrics collection is disabled by default. To enable it, set the following environment variables:
+
+- **`ALLOW_METRICS_ENDPOINT`**: Set to `true` to enable.
+- **`METRICS_PORT`**: (Optional) Specify the port for the metrics endpoint, default is `9100`.
+
+Example:
+```bash
+export ALLOW_METRICS_ENDPOINT=true
+export METRICS_PORT=2000
+```
+
+When enabled, the metrics endpoint can be accessed at `http://<dracan_ip?>:<METRICS_PORT>/metrics`.
+
+For further details on configuration and integration with Prometheus, refer to [this doc](./docs/metrics.md).
 
 ## Contributing
 

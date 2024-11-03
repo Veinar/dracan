@@ -1,7 +1,6 @@
-
 import time
-from prometheus_client import start_http_server, Counter, Histogram, Gauge
 from threading import Thread
+from prometheus_client import start_http_server, Counter, Histogram, Gauge
 from flask import request, g
 
 # Define metrics
