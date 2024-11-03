@@ -21,6 +21,7 @@ def create_app():
     for file in required_files:
         if not os.path.exists(file):
             print(f"Error: Required configuration file '{file}' is missing.")
+            print("Visit https://github.com/Veinar/dracan for more information.")
             sys.exit(1)
 
     # Load configurations
