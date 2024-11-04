@@ -1,10 +1,11 @@
 import re
 from flask import request, jsonify
 
+
 def create_path_validator(rules_config, logger):
     """
     Creates a function that validates the request URI based on the provided rules_config.
-    
+
     :param rules_config: The configuration that contains URI validation rules.
     :param logger: The logger from the Flask app to use for logging.
     :return: A validation function for URIs.
@@ -39,7 +40,7 @@ def create_path_validator(rules_config, logger):
 
         # If the path is not allowed, return 403 Forbidden
         logger.warning(f"URI {request_path} is forbidden.")
-        return False, (jsonify({'error': f"URI {request_path} is forbidden"}), 403)
+        return False, (jsonify({"error": f"URI {request_path} is forbidden"}), 403)
 
     if uri_validation_enabled:
         logger.info("URI validation is enabled.")

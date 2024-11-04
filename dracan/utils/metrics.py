@@ -4,16 +4,28 @@ from prometheus_client import start_http_server, Counter, Histogram, Gauge
 from flask import request, g
 
 # Define metrics
-REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP requests', ['method', 'endpoint', 'status'])
-REQUEST_LATENCY = Histogram('http_request_latency_seconds', 'Request latency', ['method', 'endpoint'])
-REQUEST_IN_PROGRESS = Gauge('http_requests_in_progress', 'Number of HTTP requests in progress')
-REQUEST_SIZE = Histogram('http_request_size_bytes', 'Size of HTTP requests', ['method', 'endpoint'])
-RESPONSE_SIZE = Histogram('http_response_size_bytes', 'Size of HTTP responses', ['method', 'endpoint'])
+REQUEST_COUNT = Counter(
+    "http_requests_total", "Total HTTP requests", ["method", "endpoint", "status"]
+)
+REQUEST_LATENCY = Histogram(
+    "http_request_latency_seconds", "Request latency", ["method", "endpoint"]
+)
+REQUEST_IN_PROGRESS = Gauge(
+    "http_requests_in_progress", "Number of HTTP requests in progress"
+)
+REQUEST_SIZE = Histogram(
+    "http_request_size_bytes", "Size of HTTP requests", ["method", "endpoint"]
+)
+RESPONSE_SIZE = Histogram(
+    "http_response_size_bytes", "Size of HTTP responses", ["method", "endpoint"]
+)
+
 
 def start_metrics_server(port=9100):
     """
     Start an independent HTTP server for Prometheus metrics on the specified port.
     """
+
     def metrics_thread():
         start_http_server(port)
         while True:
@@ -23,6 +35,7 @@ def start_metrics_server(port=9100):
     thread = Thread(target=metrics_thread, daemon=True)
     thread.start()
 
+
 def start_request_metrics():
     """
     Track start time and initial data for each request.
@@ -30,6 +43,7 @@ def start_request_metrics():
     g.start_time = time.time()
     g.request_size = request.content_length or 0  # Get request size if available
     REQUEST_IN_PROGRESS.inc()  # Increment the in-progress request gauge
+
 
 def finalize_request_metrics(response):
     """
@@ -50,6 +64,7 @@ def finalize_request_metrics(response):
     REQUEST_IN_PROGRESS.dec()  # Decrease the in-progress count after the request
 
     return response
+
 
 def register_metrics(app):
     """
