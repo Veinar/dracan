@@ -3,7 +3,9 @@
 
 ![GitHub License](https://img.shields.io/github/license/Veinar/dracan?style=flat)
 ![Code style](https://img.shields.io/badge/code%20style-black-black)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/41bf10729dcc4e209dded4c298d945d5)](https://app.codacy.com/gh/Veinar/dracan/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![codecov](https://codecov.io/github/Veinar/dracan/graph/badge.svg?token=LNPKYPY8RB)](https://codecov.io/github/Veinar/dracan)
+[![Testing Report](https://github.com/Veinar/dracan/actions/workflows/code_analysis.yaml/badge.svg)](https://github.com/Veinar/dracan/actions/workflows/code_analysis.yaml)
 ![Docker Image Size](https://img.shields.io/docker/image-size/veinar/dracan)
 ![Docker Pulls](https://img.shields.io/docker/pulls/veinar/dracan?color=yellow)
 ![Contrib Welcome](https://img.shields.io/badge/contributions-welcome-blue)
@@ -131,30 +133,26 @@ docker build . -t dracan:latest
 
 ### Docker environmental variables
 
-In order to enable/disable validation, filtering or limiting use env variables that should be passed to container.
-
+To **explicitly disable** validation, filtering or restriction, use environment variables which, when passed to the container, will ignore the activation via `rules_config.json`.
 > Dracan by default disables filtering/limiting/validation if entry is not present in `rules_config.json` file.
 
-but additional global disable/enable by env variables is implemented as **stub**.
-
+Additional `env`:
 ```bash
-# Should be always set to true/false
-METHOD_VALIDATION_ENABLED=true
-JSON_VALIDATION_ENABLED=true
-RATE_LIMITING_ENABLED=true
-PAYLOAD_LIMITING_ENABLED=true
-URI_VALIDATION_ENABLED=true
-HEADER_VALIDATION_ENABLED=true
 # Proxy TimeOut can be set or it will be 180 seconds by default
 PROXY_TIMEOUT=180
-# Health Check variables that should be set
-HEALTHCHECK_PORT=9000
+
+# Health Check variables
 HEALTHCHECK_DISABLED=false
+HEALTHCHECK_PORT=9000 # Unused when HEALTHCHECK_DISABLED=true
+
+# Metrics variables
+ALLOW_METRICS_ENDPOINT=true
+METRICS_PORT=9100 # Unused when ALLOW_METRICS_ENDPOINT=false
 
 # Optional
 LOG_LEVEL=INFO
 ```
-
+For further details on configuration of env variables, refer to [this doc](./docs/docker_env_config.md).
 
 ## Configuration Files
 
@@ -173,6 +171,7 @@ The `proxy_config.json` file specifies where Dracan should proxy incoming traffi
     }
 }
 ```
+**Expanded documentation about fields and values can be found [HERE](./docs/proxy_config.md).**
 
 * **host**: The address of the destination service where Dracan will forward the requests. This can be an IP address or a domain name.
 > Make sure of correct DNS settings!
@@ -227,6 +226,8 @@ The `rules_config.json` file contains rules for validating, filtering, and limit
 }
 ```
 
+**Expanded documentation about fields and values can be found [HERE](./docs/rules_config.md).**
+
 * **limiting_enabled**: A boolean value that enables or disables rate limiting for incoming requests.
 * **rate_limit**: Specifies the allowed rate of requests (e.g., "10 per minute"), how to check possible rates is described [here](https://github.com/alisaifee/flask-limiter?tab=readme-ov-file#inspect-the-limits-using-the-command-line-interface).
 * **allowed_methods**: An array of HTTP methods that are permitted for incoming requests (e.g., ["GET", "POST", "PUT", "DELETE"]).
@@ -253,6 +254,31 @@ Dracan includes a built-in health check feature to monitor the application's sta
 
 User may customize port on which Drakan listens for HC requests setting `HEALTHCHECK_PORT`env variable, or may completly disable it using `HEALTHCHECK_DISABLED` env variable.
 
+## Metrics Collection
+
+Dracan offers an optional metrics endpoint for tracking application performance and request data, which can be integrated with Prometheus for monitoring. :chart_with_upwards_trend:
+
+### Key Features
+- **Request Count**: Tracks the number of HTTP requests by method and status.
+- **Request Latency**: Measures the response times for different endpoints.
+- **Request and Response Sizes**: Analyzes data usage for incoming and outgoing requests.
+
+### Enabling Metrics
+Metrics collection is disabled by default. To enable it, set the following environment variables:
+
+- **`ALLOW_METRICS_ENDPOINT`**: Set to `true` to enable.
+- **`METRICS_PORT`**: (Optional) Specify the port for the metrics endpoint, default is `9100`.
+
+Example:
+```bash
+export ALLOW_METRICS_ENDPOINT=true
+export METRICS_PORT=2000
+```
+
+When enabled, the metrics endpoint can be accessed at `http://<dracan_ip?>:<METRICS_PORT>/metrics`.
+
+For further details on configuration and integration with Prometheus, refer to [this doc](./docs/metrics.md).
+
 ## Contributing
 
 We warmly welcome contributions to Dracan! Whether you're a seasoned developer or just starting out, your input is invaluable in making this project better. Here are a few ways you can contribute:
@@ -266,3 +292,32 @@ We warmly welcome contributions to Dracan! Whether you're a seasoned developer o
 - **Share Your Ideas**: Have a great idea for a feature or enhancement? We’d love to hear it! Start a discussion, and let's explore it together.
 
 By contributing, you’re not only helping to improve Dracan but also make one man happier. Thank you for your interest and support—together, we can make Dracan even better!
+
+> :hearts: We welcome contributions from everyone, especially if you’re new to open-source! Whether it’s fixing a typo, suggesting an idea, or spotting a bug, every contribution counts, and we’re here to support you along the way! :rocket:
+
+## How to Contribute ?
+
+Contributing to our project is a great way to learn, share, and improve your skills! We welcome contributions from everyone, whether you're a seasoned developer or a newbie. Here’s a quick guide on how to get started:
+
+1. **Fork the Repository**: Start by forking the main repository to your GitHub account. This creates a personal copy where you can make changes.
+
+2. **Clone Your Fork**: Clone the forked repository to your local machine. In your terminal, run:
+```bash
+git clone https://github.com/your_username_goes_here/dracan.git
+```
+3. **Make preparations of dev environment** follow instructions described [here](#local-development).
+
+4. **Create a New Branch:** It’s a good idea to create a new branch for each feature or bug fix. This keeps your work organized and makes it easier for others to review. Run:
+```bash
+git checkout -b branch-name-goes-here
+```
+
+5. **Make Changes:** Now you can start coding! Follow any project guidelines, such as coding standards or testing requirements.
+6. **Commit and Push:** Once your changes are ready, commit them with a clear message explaining the work you’ve done, then push your branch to GitHub:
+```bash
+git add .
+git commit -m "Describe your changes"
+git push -u origin branch-name-goes-here
+```
+7. **Submit a Pull Request:** Go to the original repository on GitHub, and you’ll see an option to create a new pull request (PR) from your branch. Add a clear description of your changes and submit the PR.
+8. **Engage in Review:** Be open to feedback! Project maintainers may request some changes before your code can be merged.
