@@ -2,6 +2,7 @@
 <img src="https://veinar.pl/dracan.png" alt="logo" width="300"/>
 
 ![GitHub License](https://img.shields.io/github/license/Veinar/dracan?style=flat)
+![GitHub Tag](https://img.shields.io/github/v/tag/Veinar/dracan?label=version)
 ![Code style](https://img.shields.io/badge/code%20style-black-black)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/41bf10729dcc4e209dded4c298d945d5)](https://app.codacy.com/gh/Veinar/dracan/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![codecov](https://codecov.io/github/Veinar/dracan/graph/badge.svg?token=LNPKYPY8RB)](https://codecov.io/github/Veinar/dracan)
