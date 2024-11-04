@@ -133,33 +133,26 @@ docker build . -t dracan:latest
 
 ### Docker environmental variables
 
-In order to enable/disable validation, filtering or limiting use env variables that should be passed to container.
-
+To **explicitly disable** validation, filtering or restriction, use environment variables which, when passed to the container, will ignore the activation via `rules_config.json`.
 > Dracan by default disables filtering/limiting/validation if entry is not present in `rules_config.json` file.
 
-but additional global disable/enable by env variables is implemented as **stub**.
-
+Additional `env`:
 ```bash
-# Should be always set to true/false
-METHOD_VALIDATION_ENABLED=true
-JSON_VALIDATION_ENABLED=true
-RATE_LIMITING_ENABLED=true
-PAYLOAD_LIMITING_ENABLED=true
-URI_VALIDATION_ENABLED=true
-HEADER_VALIDATION_ENABLED=true
 # Proxy TimeOut can be set or it will be 180 seconds by default
 PROXY_TIMEOUT=180
-# Health Check variables that should be set
-HEALTHCHECK_PORT=9000
+
+# Health Check variables
 HEALTHCHECK_DISABLED=false
+HEALTHCHECK_PORT=9000 # Unused when HEALTHCHECK_DISABLED=true
+
 # Metrics variables
 ALLOW_METRICS_ENDPOINT=true
-METRICS_PORT=9100
+METRICS_PORT=9100 # Unused when ALLOW_METRICS_ENDPOINT=false
 
 # Optional
 LOG_LEVEL=INFO
 ```
-
+For further details on configuration of env variables, refer to [this doc](./docs/docker_env_config.md).
 
 ## Configuration Files
 
