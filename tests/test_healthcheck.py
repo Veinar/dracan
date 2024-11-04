@@ -30,7 +30,7 @@ def test_health_check_status(run_health_check_server):
     """
     Test that the health check endpoint returns a 200 status.
     """
-    response = requests.get("http://127.0.0.1:9000/")
+    response = requests.get("http://127.0.0.1:9000/", timeout=15)
     assert response.status_code == 200
     assert response.headers["Content-Type"] == "application/json"
 
@@ -39,7 +39,7 @@ def test_health_check_response(run_health_check_server):
     """
     Test that the health check endpoint returns the expected JSON response.
     """
-    response = requests.get("http://127.0.0.1:9000/")
+    response = requests.get("http://127.0.0.1:9000/", timeout=15)
     assert response.status_code == 200
     json_response = response.json()
     assert json_response == {"status": "running"}
@@ -49,5 +49,5 @@ def test_health_check_invalid_path(run_health_check_server):
     """
     Test that a request to an invalid path returns a 404 status.
     """
-    response = requests.get("http://127.0.0.1:9000/invalid-path")
+    response = requests.get("http://127.0.0.1:9000/invalid-path", timeout=15)
     assert response.status_code == 404
