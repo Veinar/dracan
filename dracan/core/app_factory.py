@@ -2,7 +2,7 @@ import os
 import sys
 import logging
 from flask import Flask
-from .proxy import load_proxy_config, load_rules_config, handle_proxy
+from .proxy import handle_proxy
 from ..utils.config_compliance_check import check_env_config_conflicts
 from ..middleware.limiter import create_limiter
 from ..validators.json_validator import create_json_validator
@@ -11,6 +11,7 @@ from ..validators.path_validator import create_path_validator
 from ..validators.headers_validator import create_header_validator
 from ..middleware.payload_limiter import create_payload_size_limiter
 from ..utils.metrics import start_metrics_server, register_metrics
+from ..utils.config_load import load_proxy_config, load_rules_config, check_required_files
 
 
 def create_app():
@@ -18,12 +19,7 @@ def create_app():
     Factory function to create a Flask app based on environment settings.
     """
     # Ensure configuration files exist before starting the app
-    required_files = ["rules_config.json", "proxy_config.json"]
-    for file in required_files:
-        if not os.path.exists(file):
-            print(f"Error: Required configuration file '{file}' is missing.")
-            print("Visit https://github.com/Veinar/dracan for more information.")
-            sys.exit(1)
+    check_required_files(["rules_config.json", "proxy_config.json"])
 
     # Load configurations
     proxy_config = load_proxy_config()

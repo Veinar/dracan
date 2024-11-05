@@ -2,28 +2,10 @@ import json
 import os
 import requests
 from flask import request, jsonify, current_app as app
+from ..utils.config_load import load_proxy_config, load_rules_config
 
 # Set a default timeout in seconds if PROXY_TIMEOUT is not specified in the environment
 PROXY_TIMEOUT = int(os.getenv("PROXY_TIMEOUT", 180))
-
-
-# Load the proxy configuration from the JSON file
-def load_proxy_config(file_path="proxy_config.json"):
-    """
-    Load the destination service configuration from a JSON file.
-    """
-    with open(file_path, "r") as f:
-        return json.load(f)
-
-
-# Load the rules configuration from the JSON file
-def load_rules_config(file_path="rules_config.json"):
-    """
-    Load the filtering, limiting, and validation rules from a JSON file.
-    """
-    with open(file_path, "r") as f:
-        return json.load(f)
-
 
 def forward_request(request, config, sub=None):
     """
