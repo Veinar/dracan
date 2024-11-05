@@ -152,6 +152,7 @@ METRICS_PORT=9100 # Unused when ALLOW_METRICS_ENDPOINT=false
 
 # Optional
 LOG_LEVEL=INFO
+CONFIG_LOCATION=/some/dir
 ```
 For further details on configuration of env variables, refer to [this doc](./docs/docker_env_config.md).
 
