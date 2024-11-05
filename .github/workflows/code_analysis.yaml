@@ -29,7 +29,7 @@ jobs:
 
       - name: Run Bandit security analysis
         run: |
-          bandit dracan/
+          bandit -r dracan/
         continue-on-error: false
 
       - name: Run Pylint (exclude line-too-long warning)
