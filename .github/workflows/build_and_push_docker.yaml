@@ -1,14 +1,14 @@
 name: Docker Build
 
 on:
-  push:
-    branches:
-      - develop    # Run on all pushes to develop
-    tags:
-      - 'v*'       # Run on tagged pushes, filtered to main below
+  workflow_run:
+    workflows: ["Run tests and upload coverage"]  # Name of the test workflow
+    types:
+      - completed
 
 jobs:
   build_docker:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -35,10 +35,12 @@ jobs:
       - name: Determine Docker Tag
         id: tag
         run: |
-          if [[ "${GITHUB_REF}" == refs/heads/develop ]]; then
+          if [[ "${GITHUB_REF}" == "refs/heads/develop" ]]; then
             TAG="latest"
-          elif [[ "${GITHUB_REF}" == refs/tags/* && "${GITHUB_REF_NAME}" == "main" ]]; then
-            TAG="${GITHUB_REF#refs/tags/}"
+          elif [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            TAG="stable"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF_NAME}"
           else
             echo "This workflow is not configured to run for this ref: ${GITHUB_REF}"
             exit 1

@@ -3,7 +3,7 @@ name: Code Analysis and Testing
 on:
   push:
     branches:
-      - main
+      - develop
   pull_request:
     branches:
       - develop
