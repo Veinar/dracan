@@ -1,6 +1,6 @@
 import json
 import pytest
-from dracan.utils.config_load import load_proxy_config, load_rules_config
+from dracan.utils.config_load import load_proxy_config, load_rules_config, check_required_files
 
 @pytest.fixture
 def setup_default_config(tmp_path):
@@ -102,8 +102,7 @@ def setup_missing_fields_config(tmp_path):
     proxy_config = tmp_path / "proxy_config.json"
     rules_config = tmp_path / "rules_config.json"
     proxy_config.write_text('{}')  # Missing "destination" key
-    rules_config.write_text('{}')  # Missing "allowed_methods" and "rate_limit" keys
-
+    rules_config.write_text('{}')  # Make it same...
     return tmp_path
 
 @pytest.fixture
@@ -146,3 +145,88 @@ def test_nonexistent_config_location(monkeypatch, setup_nonexistent_config_locat
 
     with pytest.raises(FileNotFoundError, match="rules_config.json"):
         load_rules_config()
+
+
+def test_check_required_files_all_present(tmp_path, monkeypatch, capsys):
+    """
+    Test check_required_files with all required files present.
+    """
+    # Create the required files in the temporary directory
+    (tmp_path / "proxy_config.json").write_text("{}")
+    (tmp_path / "rules_config.json").write_text("{}")
+
+    # Mock the CONFIG_LOCATION environment variable to use tmp_path
+    monkeypatch.setenv("CONFIG_LOCATION", str(tmp_path))
+    
+    # Call the function and capture output
+    check_required_files(["proxy_config.json", "rules_config.json"])
+
+    # Capture and check that no output is printed (i.e., no error message)
+    captured = capsys.readouterr()
+    assert captured.out == ""
+
+
+def test_check_required_files_missing_one_file(tmp_path, monkeypatch, capsys):
+    """
+    Test check_required_files when one required file is missing.
+    """
+    # Create only one of the required files in the temporary directory
+    (tmp_path / "proxy_config.json").write_text("{}")
+
+    # Mock the CONFIG_LOCATION environment variable to use tmp_path
+    monkeypatch.setenv("CONFIG_LOCATION", str(tmp_path))
+
+    # Mock sys.exit to prevent exiting the test
+    with pytest.raises(SystemExit) as exit_exception:
+        check_required_files(["proxy_config.json", "rules_config.json"])
+
+    # Capture and check the output for the missing file message
+    captured = capsys.readouterr()
+    assert "Error: Required configuration file 'rules_config.json' is missing." in captured.out
+    assert exit_exception.value.code == 1
+
+
+def test_check_required_files_missing_both_files(tmp_path, monkeypatch, capsys):
+    """
+    Test check_required_files when both required files are missing.
+    """
+    # Mock the CONFIG_LOCATION environment variable to use tmp_path
+    monkeypatch.setenv("CONFIG_LOCATION", str(tmp_path))
+
+    # Mock sys.exit to prevent exiting the test
+    with pytest.raises(SystemExit) as exit_exception:
+        check_required_files(["proxy_config.json", "rules_config.json"])
+
+    # Capture and check the output for the missing files message
+    captured = capsys.readouterr()
+    assert "Error: Required configuration file 'proxy_config.json' is missing." in captured.out # It is displayed first
+    assert exit_exception.value.code == 1
+
+
+@pytest.fixture
+def setup_extra_fields_config(tmp_path):
+    """
+    Fixture to set up a configuration file with unexpected fields in 'destination'.
+    """
+    proxy_config = tmp_path / "proxy_config.json"
+    # Adding an unexpected field 'extra_field' to the 'destination' section
+    proxy_config.write_text(json.dumps({
+        "destination": {
+            "host": "127.0.0.1",
+            "port": 8080,
+            "path": "/",
+            "extra_field": "unexpected_value"  # Unexpected field
+        }
+    }))
+    return tmp_path
+
+def test_load_proxy_config_with_extra_fields(setup_extra_fields_config, monkeypatch):
+    """
+    Test loading a proxy configuration with unexpected fields in 'destination'.
+    """
+    # Use the fixture directory as CONFIG_LOCATION
+    monkeypatch.setenv("CONFIG_LOCATION", str(setup_extra_fields_config))
+
+    # Expect KeyError due to the unexpected 'extra_field' in the configuration
+    with pytest.raises(KeyError, match="Unexpected fields in 'destination': extra_field"):
+        load_proxy_config()
