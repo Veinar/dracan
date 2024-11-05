@@ -1,4 +1,4 @@
-name: Code Analysis and Testing
+name: Code Analysis (Lint + Security)
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
       - name: Run Bandit security analysis
         run: |
           bandit dracan/
-        continue-on-error: true # Fail workflow if issues are found
+        continue-on-error: false # Fail workflow if issues are found
 
       - name: Run Pylint (exclude line-too-long warning)
         run: |

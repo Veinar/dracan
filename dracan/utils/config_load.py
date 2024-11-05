@@ -34,7 +34,7 @@ def load_proxy_config():
     required_keys = {"host", "port", "path"}
     if "destination" not in config:
         raise KeyError("Missing required object 'destination' in proxy configuration")
-    
+
     # Check if 'destination' contains only the required keys
     destination_config = config["destination"]
     if not required_keys.issubset(destination_config.keys()):
