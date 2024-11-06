@@ -2,6 +2,7 @@ import os
 import json
 import sys
 
+
 def get_config_file_path(filename):
     """
     Determine the configuration file path, using CONFIG_LOCATION if set,
@@ -9,6 +10,7 @@ def get_config_file_path(filename):
     """
     config_location = os.getenv("CONFIG_LOCATION", "")
     return os.path.join(config_location, filename) if config_location else filename
+
 
 def check_required_files(required_files):
     """
@@ -20,6 +22,7 @@ def check_required_files(required_files):
             print(f"Error: Required configuration file '{filename}' is missing.")
             print("Visit https://github.com/Veinar/dracan for more information.")
             sys.exit(1)
+
 
 def load_proxy_config():
     """
@@ -39,7 +42,9 @@ def load_proxy_config():
     destination_config = config["destination"]
     if not required_keys.issubset(destination_config.keys()):
         missing_keys = required_keys - destination_config.keys()
-        raise KeyError(f"Missing required fields in 'destination': {', '.join(missing_keys)}")
+        raise KeyError(
+            f"Missing required fields in 'destination': {', '.join(missing_keys)}"
+        )
 
     # Ensure no extra fields are present
     extra_keys = set(destination_config.keys()) - required_keys
@@ -47,6 +52,7 @@ def load_proxy_config():
         raise KeyError(f"Unexpected fields in 'destination': {', '.join(extra_keys)}")
 
     return config
+
 
 def load_rules_config():
     """

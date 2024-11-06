@@ -11,7 +11,11 @@ from ..validators.path_validator import create_path_validator
 from ..validators.headers_validator import create_header_validator
 from ..middleware.payload_limiter import create_payload_size_limiter
 from ..utils.metrics import start_metrics_server, register_metrics
-from ..utils.config_load import load_proxy_config, load_rules_config, check_required_files
+from ..utils.config_load import (
+    load_proxy_config,
+    load_rules_config,
+    check_required_files,
+)
 
 
 def create_app():

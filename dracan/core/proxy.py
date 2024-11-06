@@ -7,6 +7,7 @@ from ..utils.config_load import load_proxy_config, load_rules_config
 # Set a default timeout in seconds if PROXY_TIMEOUT is not specified in the environment
 PROXY_TIMEOUT = int(os.getenv("PROXY_TIMEOUT", 180))
 
+
 def forward_request(request, config, sub=None):
     """
     Forward the incoming request to the destination service.
