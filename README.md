@@ -67,93 +67,16 @@ Dracan is designed to be implemented as middleware in Kubernetes (k8s) environme
 
 By following these steps, you can effectively integrate Dracan into your Kubernetes environment, enhancing the security and reliability of your applications.
 
-## Local development
+## Local development, testing and quality checking
 
-To start developing Dracan on your local machine, you can set up a mock service for live debugging. Follow these steps to get started:
+To start developing Dracan on your local machine, you can set up a mock service for live debugging. Follow steps described in [this doc](./docs/local_development.md) to get started.
 
-1. **Clone the Repository**: First, clone the Dracan repository to your local machine if you haven't done so already.
-   ```bash
-   git clone https://github.com/Veinar/dracan.git
-   cd dracan
-   ```
-2. Set Up a Virtual Environment: It’s recommended to create a virtual environment for your development work to manage dependencies.
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\Activate.ps1`
-    ```
-3. Install Required Dependencies: Install the necessary Python packages using pip. Ensure you have Flask installed, as it is used for the mock service.
-    ```bash
-    pip install -r requirements.txt
-    ```
-4. Run the Mock Service: Start the mock service provided in the Dracan package. This service is located in `tests/destination_mock.py` and simulates the application your Dracan middleware will be interfacing with.
-    ```bash
-    python tests/destination_mock.py
-    ```
-5. Live Debugging: With the mock service running, you can now run Dracan in your local environment. This allows you to test and debug how Dracan interacts with the mock service in real-time.
-6. Modify and Test: Make changes to Dracan's code as needed, and observe the interactions with the mock service. This setup enables you to develop efficiently and troubleshoot any issues in real-time.
-
-## Running Unit Tests
-
-Dracan includes a suite of unit tests to ensure the functionality and reliability of the code. Running these tests is an important step when contributing to the project, especially when adding new features or enhancements.
-Please note that these tests were written using ChatGPT due to my lack of experience in this area.
-
-### Prerequisites
-
-Before running the tests, make sure you have **pytest** installed in your environment. You can install it using pip:
-
-```bash
-pip install pytest
-```
-
-### Running the Tests
-
-To run the unit tests for Dracan, execute the following command from the root directory of the project:
-
-```bash
-pytest tests/
-```
-
-This command will run all the tests located in the `tests` directory and provide you with feedback on the results.
-
-### Expanding Tests
-
-As you work on expanding Dracan with new features or validations, it is essential to also expand the test suite. Ensure that any new validations or limiting functionalities are covered by corresponding tests. This practice not only helps maintain the integrity of the project but also provides assurance that existing functionality remains unaffected by new changes.
-
-We encourage you to contribute by writing additional tests and improving the overall test coverage. Your efforts in this area will help ensure that Dracan remains a reliable and robust middleware solution.
-
-
-## Building Docker image
-
-In order to prepare Docker image inside root directory of project execute:
-```bash
-docker build . -t dracan:latest
-```
-> You may want to change name or tag for this build command
+## Docker
 
 **Docker image is present at [DockerHub](https://hub.docker.com/r/veinar/dracan).** For ease of use it is shipped without config JSONs. Remember to provide them on runtime!
 
-### Docker environmental variables
+You can also build image from source just follow [this doc](./docs/docker_building.md).
 
-To **explicitly disable** validation, filtering or restriction, use environment variables which, when passed to the container, will ignore the activation via `rules_config.json`.
-> Dracan by default disables filtering/limiting/validation if entry is not present in `rules_config.json` file.
-
-Additional `env`:
-```bash
-# Proxy TimeOut can be set or it will be 180 seconds by default
-PROXY_TIMEOUT=180
-
-# Health Check variables
-HEALTHCHECK_DISABLED=false
-HEALTHCHECK_PORT=9000 # Unused when HEALTHCHECK_DISABLED=true
-
-# Metrics variables
-ALLOW_METRICS_ENDPOINT=true
-METRICS_PORT=9100 # Unused when ALLOW_METRICS_ENDPOINT=false
-
-# Optional
-LOG_LEVEL=INFO
-CONFIG_LOCATION=/some/dir
-```
 For further details on configuration of env variables, refer to [this doc](./docs/docker_env_config.md).
 
 ## Configuration Files
@@ -307,7 +230,7 @@ Contributing to our project is a great way to learn, share, and improve your ski
 ```bash
 git clone https://github.com/your_username_goes_here/dracan.git
 ```
-3. **Make preparations of dev environment** follow instructions described [here](#local-development).
+3. **Make preparations of dev environment** follow instructions described [here](./docs/local_development.md).
 
 4. **Create a New Branch:** It’s a good idea to create a new branch for each feature or bug fix. This keeps your work organized and makes it easier for others to review. Run:
 ```bash

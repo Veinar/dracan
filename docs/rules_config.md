@@ -319,3 +319,47 @@ Example:
       ]
 ...
 ```
+
+## Fully customized `rules_config.json` example:
+
+```json
+{
+  "limiting_enabled": true,
+  "rate_limit": "20 per minute",
+  "method_validation_enabled": true,
+  "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
+  "json_validation_enabled": true,
+  "detailed_errors_enabled": false,
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string" },
+      "age": { "type": "number" }
+    },
+    "required": ["name", "age"]
+  },  
+  "uri_validation_enabled": true,
+  "allowed_uris": [
+    "/health",
+    "/data",
+    "/update",
+    "/delete"
+  ],
+  "allowed_uri_patterns": [
+    "^/api/.*",               
+    "^/public/[A-Za-z0-9_-]+"
+  ],
+  "payload_limiting_enabled": true,
+  "max_payload_size": 1024,
+  "header_validation_enabled": true,
+  "required_headers": {
+    "Content-Type": "application/json",
+    "X-API-KEY": "*",
+    "Authorization": "regex:^Bearer\\s[A-Za-z0-9\\-_]+\\.[A-Za-z0-9\\-_]+\\.[A-Za-z0-9\\-_]+$"
+  },
+  "prohibited_headers": [
+    "X-Internal-Header",
+    "X-Debug-Token"
+  ]
+}
+```
