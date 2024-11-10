@@ -33,7 +33,7 @@
   - **Prohibited Headers**: Specify headers that should not be included in the request.
   - **Header Matching**: Use regular expressions to validate header values or check for the presence of a header using a wildcard (`*`).
 
-- **More filtering/validation underway...**
+- **You have another filtering/validation idea? Submit an issue! We are open for ideas :hearts:**
 
 Dracan is intended to serve as a gatekeeper for your applications, protecting them from erroneous or redundant queries. By ensuring the integrity of incoming requests, it contributes to operational continuity and safeguards against disruptive events.
 
