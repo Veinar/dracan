@@ -43,7 +43,7 @@ Dracan is a lightweight yet powerful middleware security solution for handling r
 
 Ideal for use for applications hosted on Kubernetes or GKE, Dracan offers essential security features to protect internal requests so that teams can focus on development. Because of its modular design, you are sure to be able to customize security needs with ease and speed. Dracan is both friendly and powerful for application protection.
 
-> Random requests performance test result of performance could be found [here](https://pastebin.com/61Fyy2Pe).   
+> Random requests performance test result could be found [here](https://pastebin.com/61Fyy2Pe).   
 > Powershell script used for this test can be found [here](https://gist.github.com/Veinar/bd8abc12ed3ce3367980da5a335f78f2).
 
 ## How to use it ?
